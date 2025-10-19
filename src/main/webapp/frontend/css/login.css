@@ -16,6 +16,21 @@ body {
   min-height: 100vh;
 }
 
+/* --- Hiệu ứng chuyển trang --- */
+body {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+body.fade-out {
+  opacity: 0;
+  transform: scale(0.96); /* thu nhỏ nhẹ khi mờ */
+  filter: blur(2px);
+}
+
+
+
 /* ==== KHUNG CHÍNH ==== */
 .login-container {
   width: 420px;

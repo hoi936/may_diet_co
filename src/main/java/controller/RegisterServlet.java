@@ -18,10 +18,11 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Lấy dữ liệu từ form
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        // Tạo user mới
+        // Tạo đối tượng người dùng mới
         NguoiDung user = new NguoiDung();
         user.setTenDangNhap(username);
         user.setMatKhau(password);
@@ -29,13 +30,13 @@ public class RegisterServlet extends HttpServlet {
         boolean success = userDao.insert(user);
 
         if (success) {
-            // Đăng ký thành công → chuyển về login
+            // ✅ Đăng ký thành công → chuyển về trang login
             response.sendRedirect(request.getContextPath() + "/login");
+            return; // ❗ Dừng luôn, tránh lỗi forward sau redirect
         } else {
-            // Báo lỗi khi trùng username
+            // ❌ Tên đăng nhập đã tồn tại → hiển thị lại form với thông báo lỗi
             request.setAttribute("error", "Tên đăng nhập đã tồn tại!");
-        }
             request.getRequestDispatcher("/views/register.jsp").forward(request, response);
-        
+        }
     }
 }
