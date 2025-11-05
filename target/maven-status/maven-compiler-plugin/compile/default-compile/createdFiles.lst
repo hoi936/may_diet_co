@@ -2,11 +2,15 @@ controller\TestApiServlet.class
 util\DBConnect.class
 model\LenhDieuKhien.class
 dao\NguoiDungDAO.class
+controller\SocketClientHandler.class
 controller\MayDeleteServlet.class
+controller\SocketServerManager.class
 model\NguoiDung.class
 dao\PhienHoatDongDAO.class
+controller\AppInitializer.class
 com\mycompany\may_diet_co\JakartaRestConfiguration.class
 controller\LichSuPhienServlet.class
+controller\ClientConnectionManager.class
 controller\MayListServlet.class
 controller\LichSuController.class
 dao\LichSuCoDAO.class

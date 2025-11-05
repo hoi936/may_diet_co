@@ -23,7 +23,18 @@ body {
     color: var(--text-color);
     line-height: 1.6;
 }
+/* ==== HIỆU ỨNG CHUYỂN TRANG ==== */
+body {
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  opacity: 1;
+  transform: scale(1);
+}
 
+body.fade-out {
+  opacity: 0;
+  transform: scale(0.96);
+  filter: blur(2px);
+}
 /* --- BỐ CỤC CHÍNH --- */
 .container {
     max-width: 1200px;

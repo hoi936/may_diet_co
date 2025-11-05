@@ -1,141 +1,95 @@
-/* ==== RESET ==== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ==== TOÀN TRANG ==== */
 body {
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f6f7f8;
-  color: #222;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-/* --- Hiệu ứng chuyển trang --- */
-body {
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg,#ff9800, #2E7D32);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    transition: opacity 0.7s ease;
 }
 
 body.fade-out {
-  opacity: 0;
-  transform: scale(0.96); /* thu nhỏ nhẹ khi mờ */
-  filter: blur(2px);
+    opacity: 0;
 }
 
-
-
-/* ==== KHUNG CHÍNH ==== */
 .login-container {
-  width: 420px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  padding: 50px 40px;
-  text-align: center;
-  transition: all 0.3s ease;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    padding: 40px 30px;
+    text-align: center;
+    animation: fadeIn 1s ease;
 }
 
-/* ==== TIÊU ĐỀ ==== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 h2 {
-  font-size: 26px;
-  color: #ff9800;
-  margin-bottom: 35px;
-  font-weight: 700;
-  display: inline-block;
-  position: relative;
+    color: #ff9800;
+    margin-bottom: 30px;
 }
 
-h2::after {
-  content: "";
-  display: block;
-  width: 50px;
-  height: 3px;
-  background: #ff9800;
-  border-radius: 2px;
-  margin: 8px auto 0;
-}
-
-/* ==== FORM ==== */
 .login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  text-align: left;
+    display: flex;
+    flex-direction: column;
 }
 
-/* ==== LABEL ==== */
-label {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 5px;
-  font-size: 15px;
+.login-form label {
+    text-align: left;
+    margin-bottom: 5px;
+    color: #444;
+    font-weight: 600;
 }
 
-/* ==== INPUT ==== */
-input[type="text"],
-input[type="password"] {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1.6px solid #ccc;
-  border-radius: 10px;
-  font-size: 15px;
-  transition: border 0.25s ease, box-shadow 0.25s ease;
+.login-form input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    outline: none;
+    font-size: 15px;
+    transition: 0.3s;
 }
 
-input:focus {
-  border-color: #ff9800;
-  box-shadow: 0 0 8px rgba(255, 152, 0, 0.3);
-  outline: none;
+.login-form input:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 5px #ff9800;
 }
 
-/* ==== NÚT ==== */
 button {
-  background-color: #ff9800;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 10px;
-  transition: all 0.25s ease;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-  background-color: #e68a00;
-  transform: translateY(-2px);
+    background:#ff9800;
 }
 
-/* ==== LINK ĐĂNG KÝ ==== */
 .register-link {
-  display: inline-block;
-  margin-top: 25px;
-  font-size: 15px;
-  color: #555;
-  text-decoration: none;
-  transition: color 0.25s;
+    display: inline-block;
+    margin-top: 15px;
+    color: #ff9800;
+    text-decoration: none;
+    font-weight: 500;
 }
 
 .register-link:hover {
-  color: #ff9800;
+    text-decoration: underline;
 }
 
-/* ==== RESPONSIVE ==== */
-@media (max-width: 480px) {
-  .login-container {
-    width: 92%;
-    padding: 35px 25px;
-  }
-
-  h2 {
-    font-size: 22px;
-  }
+.error {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+    min-height: 20px;
 }

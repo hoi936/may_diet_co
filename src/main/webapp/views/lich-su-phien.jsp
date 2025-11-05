@@ -69,5 +69,24 @@
             </tbody>
         </table>
     </div>
+            <script>
+    // Hiệu ứng chuyển trang mượt khi nhấn nút hoặc liên kết
+    document.querySelectorAll('a').forEach(link => {
+        // Chỉ áp dụng cho các link nội bộ (tránh link ngoài trang)
+        link.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('http')) return; 
+
+            e.preventDefault();                     // Ngăn điều hướng ngay
+            document.body.classList.add('fade-out'); // Thêm hiệu ứng mờ dần
+            void document.body.offsetWidth;          // Kích hoạt reflow
+
+            // Chuyển trang sau khi hiệu ứng kết thúc (700ms)
+            setTimeout(() => {
+                window.location.href = href;
+            }, 700);
+        });
+    });
+</script>
 </body>
 </html>

@@ -6,6 +6,9 @@ import dao.LenhDieuKhienDAO;
 import model.MayDietCo;
 import model.PhienHoatDong;
 
+// ✅ BƯỚC 1: THÊM IMPORT QUAN TRỌNG NÀY
+import controller.ClientConnectionManager; 
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -19,7 +22,7 @@ public class MayDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        // Phần doGet giữ nguyên, không cần sửa
         int maMay = Integer.parseInt(request.getParameter("id"));
         MayDietCo may = mayDAO.findById(maMay);
         if (may == null) {
@@ -27,7 +30,6 @@ public class MayDetailServlet extends HttpServlet {
             return;
         }
 
-        // Lấy danh sách phiên hoạt động
         List<PhienHoatDong> phienList = phienDAO.getAllByMay(may.getMaDinhDanh());
 
         request.setAttribute("may", may);
@@ -51,17 +53,27 @@ public class MayDetailServlet extends HttpServlet {
         String maDinhDanh = may.getMaDinhDanh();
 
         if (action.equals("START")) {
+            // --- Phần code CŨ của bạn (Giữ nguyên) ---
             lenhDAO.insertCommand(maDinhDanh, action);
             may.setTrangThai("DANG_HOAT_DONG");
             mayDAO.update(may);
             phienDAO.startPhien(maDinhDanh);
+            
+            // ✅ BƯỚC 2: GỬI LỆNH ĐẾN JETSON
+            ClientConnectionManager.sendCommand(maDinhDanh, "START");
+
         } else if (action.equals("STOP")) {
+            // --- Phần code CŨ của bạn (Giữ nguyên) ---
             lenhDAO.insertCommand(maDinhDanh, action);
             may.setTrangThai("NGUNG_HOAT_DONG");
             mayDAO.update(may);
             phienDAO.stopPhien(maDinhDanh);
+            
+            // ✅ BƯỚC 2: GỬI LỆNH ĐẾN JETSON
+            ClientConnectionManager.sendCommand(maDinhDanh, "STOP");
         }
 
+        // Chuyển hướng về trang chi tiết
         response.sendRedirect(request.getContextPath() + "/may-detail?id=" + maMay);
     }
 }

@@ -7,9 +7,13 @@ public class MayDietCo {
     private String maDinhDanh;
     private String tenMay;
     private String trangThai;
+    private String ip;
     private Timestamp lanCuoiHoatDong;
 
     // Getters & Setters
+    public String getIp() { return ip;}
+    public void setIp(String ip){this.ip = ip ;}
+    
     public int getMaMay() { return maMay; }
     public void setMaMay(int maMay) { this.maMay = maMay; }
 
