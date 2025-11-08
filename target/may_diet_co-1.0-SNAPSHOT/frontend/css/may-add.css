@@ -1,29 +1,55 @@
-/* may-add.css — lớn hơn + chỉnh sửa khung chữ (cam - trắng - đen) */
+/* may-add.css — Đồng bộ chủ đề màu xanh */
 
 /* Basic reset + font */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: "Segoe UI", sans-serif;
-  background: #f6f6f6;
+  /* Thay đổi: Nền gradient xanh */
+  background: linear-gradient(120deg, #e0f7ff 0%, #c0dfff 100%);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 40px 20px;
   color: #222;
+  overflow-x: hidden; /* Thêm để tránh thanh cuộn ngang */
 }
 
-/* Main container: to hơn */
+/* Thêm: Hiệu ứng particle */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="%23ffffff20"/></svg>') 0 0/50px 50px;
+    pointer-events: none;
+    opacity: 0.5;
+    animation: sparkle 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes sparkle {
+    from { background-position: 0 0; }
+    to { background-position: 100% 100%; }
+}
+
+/* Main container: to hơn + hiệu ứng mờ */
 .container {
-  background-color: #fff;
-  width: 880px;               /* tăng rộng */
+  /* Thay đổi: Hiệu ứng kính mờ (frosted glass) */
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  
+  width: 880px;           /* giữ nguyên */
   max-width: calc(100% - 80px);
   padding: 48px;
   border-radius: 18px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.08);
 }
 
-/* Header: tiêu đề + nút trên cùng hàng, không bị chia tứ tung */
+/* Header: tiêu đề + nút trên cùng hàng */
 .page-header {
   display: flex;
   align-items: center;
@@ -32,19 +58,20 @@ body {
   margin-bottom: 28px;
 }
 
-/* Title: giữ line-height chuẩn, cho phép xuống dòng mềm nếu nhỏ màn */
+/* Title: Đổi sang màu xanh */
 .page-header h1 {
-  color: #ff8c00;            /* cam chủ đạo */
-  font-size: 28px;          /* lớn hơn */
+  /* Thay đổi: Màu cam -> xanh */
+  color: #0066cc;
+  font-size: 28px;
   font-weight: 700;
-  line-height: 1.15;        /* tránh khoảng thừa gây split lạ */
+  line-height: 1.15;
   margin-right: 12px;
-  word-break: keep-all;     /* tránh tách từ giữa chữ */
+  word-break: keep-all;
   white-space: normal;
-  max-width: 68%;           /* chiếm không quá lớn để 2 nút bên phải vừa */
+  max-width: 68%;
 }
 
-/* Header buttons (quay lại + đăng xuất) */
+/* Header buttons (quay lại + đăng xuất) - Giữ nguyên */
 .header-buttons {
   display: flex;
   gap: 12px;
@@ -52,7 +79,6 @@ body {
   justify-content: flex-end;
 }
 
-/* small rounded btns */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -63,20 +89,30 @@ body {
   text-decoration: none;
   cursor: pointer;
   border: none;
+  transition: transform 0.2s ease, background 0.2s ease; /* Thêm transition */
+}
+.btn:hover {
+  transform: translateY(-2px); /* Thêm hover chung */
 }
 
-/* back (light grey) */
+/* back (light grey) - Giữ nguyên */
 .btn-back {
   background: #e9e9e9;
   color: #222;
   min-width: 110px;
 }
+.btn-back:hover {
+  background: #dcdcdc;
+}
 
-/* logout (black) */
+/* logout (black) - Giữ nguyên */
 .btn-logout {
   background: #111;
   color: #fff;
   min-width: 110px;
+}
+.btn-logout:hover {
+  background: #000;
 }
 
 /* Form area: to, spacing lớn */
@@ -114,17 +150,19 @@ select {
   transition: box-shadow .18s, border-color .18s;
 }
 
-/* placeholder styling + taller line-height to fix "khung chữ" */
+/* placeholder styling + taller line-height */
 input::placeholder {
   color: #bdbdbd;
   line-height: 1.4;
 }
 input, select { line-height: 1.4; }
 
-/* focus state */
-input:focus, select:focus {
-  border-color: #ff8c00;
-  box-shadow: 0 6px 18px rgba(255,140,0,0.12);
+/* focus state: Đổi sang màu xanh */
+input:focus, select:focus, textarea:focus {
+  /* Thay đổi: Viền cam -> xanh */
+  border-color: #0080ff;
+  /* Thay đổi: Shadow cam -> xanh */
+  box-shadow: 0 6px 18px rgba(0, 102, 204, 0.2);
 }
 
 /* Buttons row */
@@ -136,21 +174,27 @@ input:focus, select:focus {
   gap: 16px;
 }
 
-/* Add button (cam) */
+/* Add button (Đổi sang gradient xanh) */
 .btn-submit {
-  background-color: #ff8c00;
+  /* Thay đổi: Nền cam -> gradient xanh */
+  background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
   color: #fff;
   padding: 12px 20px;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(255,140,0,0.18);
+  /* Thay đổi: Shadow cam -> xanh */
+  box-shadow: 0 6px 18px rgba(0, 102, 204, 0.25);
   border: none;
   font-weight: 700;
   min-width: 170px;
   text-align: center;
 }
-.btn-submit:hover { background-color: #e67e00; transform: translateY(-2px); }
+.btn-submit:hover { 
+  /* Thay đổi: Hover cam -> xanh */
+  background: linear-gradient(135deg, #0099ff 0%, #0080ff 100%);
+  transform: translateY(-2px); 
+}
 
-/* Cancel button (xám) */
+/* Cancel button (xám) - Giữ nguyên */
 .btn-cancel {
   background: #f0f0f0;
   color: #222;
@@ -159,11 +203,12 @@ input:focus, select:focus {
   text-align: center;
   min-width: 120px;
 }
+.btn-cancel:hover {
+  background: #e0e0e0; /* Thêm hover nhẹ */
+}
 
-/* Fix tiêu đề xuống dòng cụ thể: nếu bạn muốn luôn trên 1 dòng (không khuyến khích trên màn nhỏ),
-   thay phần .page-header h1 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } */
 
-/* Responsive: trên màn nhỏ tự co lại */
+/* Responsive: Giữ nguyên */
 @media (max-width: 960px) {
   .container { width: 92%; padding: 32px; }
   .page-header h1 { font-size: 22px; max-width: 60%; }

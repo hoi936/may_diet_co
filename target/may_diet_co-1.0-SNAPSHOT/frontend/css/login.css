@@ -1,95 +1,277 @@
+/* ===== BODY ===== */
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg,#ff9800, #2E7D32);
+    background: 
+        linear-gradient(135deg, rgba(0, 122, 255, 0.2), rgba(0, 153, 255, 0.2)),
+        url('../../Images/BkR.jpg') center/cover no-repeat fixed;
+    background-blend-mode: overlay;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    transition: opacity 0.7s ease;
+    transition: all 0.7s ease;
+    position: relative;
+    overflow: hidden;
 }
 
+/* Hiệu ứng hạt sáng lấp lánh */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="%23ffffff20"/></svg>') 0 0/50px 50px;
+    pointer-events: none;
+    opacity: 0.4;
+    animation: sparkle 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes sparkle {
+    from { background-position: 0 0; }
+    to { background-position: 100% 100%; }
+}
+
+/* Hiệu ứng gradient xoay nhẹ */
+body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    animation: rotateGradient 30s linear infinite;
+    z-index: -1;
+}
+
+@keyframes rotateGradient {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Hiệu ứng mờ khi chuyển trang */
 body.fade-out {
     opacity: 0;
 }
 
+/* ===== LOGIN CONTAINER ===== */
 .login-container {
-    background: white;
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 
+        0 8px 32px rgba(0, 122, 255, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.4);
     width: 400px;
-    padding: 40px 30px;
+    padding: 40px;
     text-align: center;
-    animation: fadeIn 1s ease;
+    animation: fadeIn 0.6s ease;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(12px);
 }
 
+/* Hiệu ứng sáng bên trong khung đăng nhập */
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 60%);
+    animation: rotateShine 8s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes rotateShine {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Hiệu ứng vệt sáng chạy qua khung */
+.login-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    animation: shine 5s infinite;
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    20% { left: 100%; }
+    100% { left: 100%; }
+}
+
+/* ===== TEXT & FORM ===== */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px) scale(0.95);
+        filter: blur(10px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
 }
 
 h2 {
-    color: #ff9800;
+    color: #0066cc;
     margin-bottom: 30px;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0066cc, transparent);
+    border-radius: 3px;
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 1;
 }
 
 .login-form label {
+    display: block;
     text-align: left;
-    margin-bottom: 5px;
-    color: #444;
-    font-weight: 600;
+    margin-bottom: 6px;
+    color: #4b5563;
+    font-weight: 500;
+    font-size: 13px;
 }
 
 .login-form input {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid rgba(0, 122, 255, 0.2);
+    border-radius: 12px;
     margin-bottom: 20px;
     outline: none;
     font-size: 15px;
-    transition: 0.3s;
+    color: #333;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+    box-sizing: border-box;
+    backdrop-filter: blur(4px);
 }
 
 .login-form input:focus {
-    border-color: #ff9800;
-    box-shadow: 0 0 5px #ff9800;
+    border-color: #0066cc;
+    background: #ffffff;
+    box-shadow: 
+        0 0 0 4px rgba(0, 102, 204, 0.15),
+        0 4px 12px rgba(0, 102, 204, 0.1);
+    transform: translateY(-1px);
 }
 
+/* ===== BUTTON ===== */
 button {
-    background: #ff9800;
+    width: 100%;
+    background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 15px;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 
+        0 4px 15px rgba(0, 102, 204, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    transition: left 0.5s ease;
 }
 
 button:hover {
-    background:#ff9800;
+    background: linear-gradient(135deg, #0099ff 0%, #0080ff 100%);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(0, 102, 204, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
 }
 
+button:hover::before {
+    left: 100%;
+}
+
+/* ===== LINKS & ERRORS ===== */
 .register-link {
     display: inline-block;
-    margin-top: 15px;
-    color: #ff9800;
+    margin-top: 20px;
+    color: #0066cc;
     text-decoration: none;
     font-weight: 500;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background: rgba(0, 102, 204, 0.1);
 }
 
 .register-link:hover {
-    text-decoration: underline;
+    background: rgba(0, 102, 204, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.1);
 }
 
 .error {
-    color: red;
-    margin-top: 10px;
-    font-size: 14px;
+    color: #ff3b30;
+    margin-top: 15px;
+    font-size: 13px;
     min-height: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 59, 48, 0.1);
+    backdrop-filter: blur(4px);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }

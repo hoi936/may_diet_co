@@ -1,6 +1,14 @@
 /* --- BIẾN TOÀN CỤC VÀ RESET --- */
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap');
+
 :root {
-    --primary-color: #007bff; /* Xanh dương hiện đại */
+    /* Thay đổi: Cập nhật biến màu để khớp với chủ đề login */
+    --primary-color: #0066cc; /* Màu xanh đậm chính */
+    --primary-gradient-start: #0080ff; /* Màu xanh gradient (giống nút login) */
+    --primary-gradient-end: #0066cc;
+    --primary-shadow-color: rgba(0, 102, 204, 0.2);
+    --primary-light-bg: rgba(0, 102, 204, 0.1); /* Nền xanh nhạt (cho nút view) */
+    
     --secondary-color: #6c757d;
     --success-color: #28a745;
     --danger-color: #dc3545;
@@ -9,7 +17,12 @@
     --dark-color: #343a40;
     --text-color: #495057;
     --border-color: #dee2e6;
-    --background-color: #f4f7f9;
+
+    /* Thay đổi: Nền container mờ */
+    --container-background: rgba(255, 255, 255, 0.85);
+    --container-border: 1px solid rgba(255, 255, 255, 0.4);
+
+    /* Giữ nguyên từ file mới */
     --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     --border-radius: 8px;
     --font-family: 'Be Vietnam Pro', sans-serif;
@@ -17,13 +30,39 @@
 
 body {
     font-family: var(--font-family);
-    background-color: var(--background-color);
+    /* Thay đổi: Nền gradient cho body */
+    background: linear-gradient(120deg, #e0f7ff 0%, #c0dfff 100%);
     margin: 0;
     padding: 20px;
     color: var(--text-color);
     line-height: 1.6;
+    min-height: 100vh; /* Đảm bảo gradient phủ kín */
+    overflow-x: hidden;
 }
+
+/* Thêm: Hiệu ứng particle từ file trước */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="%23ffffff20"/></svg>') 0 0/50px 50px;
+    pointer-events: none;
+    opacity: 0.5;
+    animation: sparkle 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes sparkle {
+    from { background-position: 0 0; }
+    to { background-position: 100% 100%; }
+}
+
+
 /* ==== HIỆU ỨNG CHUYỂN TRANG ==== */
+/* Giữ nguyên hiệu ứng fade-out của file mới, rất đẹp! */
 body {
   transition: opacity 0.8s ease, transform 0.8s ease;
   opacity: 1;
@@ -40,7 +79,10 @@ body.fade-out {
     max-width: 1200px;
     margin: 40px auto;
     padding: 30px;
-    background-color: #fff;
+    /* Thay đổi: Áp dụng hiệu ứng mờ (frosted glass) */
+    background-color: var(--container-background);
+    border: var(--container-border);
+    backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
 }
@@ -59,7 +101,8 @@ body.fade-out {
 .page-header h1 {
     margin: 0;
     font-size: 28px;
-    color: var(--dark-color);
+    /* Thay đổi: Dùng màu xanh chính */
+    color: var(--primary-color); 
     font-weight: 700;
 }
 
@@ -88,12 +131,17 @@ body.fade-out {
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
+    /* Thay đổi: Nút chính dùng gradient xanh */
+    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
     color: #fff;
+    border: none;
+    box-shadow: 0 4px 15px var(--primary-shadow-color);
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    /* Thay đổi: Hover cho nút gradient */
+    background: linear-gradient(135deg, #0099ff, var(--primary-gradient-start));
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
 }
 
 .btn-secondary {
@@ -126,12 +174,14 @@ body.fade-out {
 }
 
 .modern-table thead {
-    background-color: var(--light-color);
+    /* Thay đổi: Header bảng dùng gradient xanh */
+    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
 }
 
 .modern-table th {
     font-weight: 700;
-    color: var(--dark-color);
+    /* Thay đổi: Chữ trắng trên nền gradient */
+    color: #fff;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -147,7 +197,8 @@ body.fade-out {
 }
 
 .modern-table tbody tr:hover {
-    background-color: #e9ecef4d;
+    /* Thay đổi: Màu hover hàng (giống file trước) */
+    background-color: rgba(230, 245, 255, 0.9);
 }
 
 /* --- CÁC THÀNH PHẦN NHỎ (CHIP, ACTIONS) --- */
@@ -186,14 +237,24 @@ body.fade-out {
     border: 1px solid var(--border-color);
 }
 
-.btn-view { color: var(--primary-color); }
-.btn-view:hover { background-color: var(--primary-color); color: #fff; }
+/* Thay đổi: Nút View đồng bộ với màu xanh nhạt */
+.btn-view { 
+    color: var(--primary-color);
+    background-color: var(--primary-light-bg);
+    border-color: var(--primary-color);
+}
+.btn-view:hover { 
+    background-color: var(--primary-color); 
+    color: #fff; 
+}
 
-.btn-edit { color: var(--success-color); }
+/* Giữ nguyên nút Sửa và Xóa */
+.btn-edit { color: var(--success-color); border-color: var(--success-color); background-color: rgba(40, 167, 69, 0.1); }
 .btn-edit:hover { background-color: var(--success-color); color: #fff; }
 
-.btn-delete { color: var(--danger-color); }
+.btn-delete { color: var(--danger-color); border-color: var(--danger-color); background-color: rgba(220, 53, 69, 0.1); }
 .btn-delete:hover { background-color: var(--danger-color); color: #fff; }
+
 
 .no-data {
     text-align: center;
@@ -206,6 +267,7 @@ body.fade-out {
 }
 
 /* --- THIẾT KẾ ĐÁP ỨNG (RESPONSIVE) --- */
+/* Giữ nguyên toàn bộ phần responsive, nó đã được làm rất tốt */
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -234,6 +296,7 @@ body.fade-out {
         margin-bottom: 15px;
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius);
+        overflow: hidden; /* Thêm để bo góc hoạt động */
     }
     
     .modern-table td {

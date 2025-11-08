@@ -1,37 +1,94 @@
-/* ==== Giao diện tổng thể ==== */
+/* ==== Giao diện tổng thể & Animation ==== */
 body {
     font-family: "Segoe UI", sans-serif;
-    background: linear-gradient(135deg,#ff9800, #2E7D32);
+    background: linear-gradient(120deg, #ffecd2 0%, #fcb69f 100%);
     margin: 0;
-    color: #222;
-}
-body {
-  opacity: 0;
-  animation: fadeIn 0.6s ease forwards;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-body {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+    color: #2c3e50;
+    min-height: 100vh;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards;
+    overflow-x: hidden;
 }
 
-body.loaded {
-  opacity: 1;
-  transform: translateY(0);
+/* Thêm particle effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="%23ffffff20"/></svg>') 0 0/50px 50px;
+    pointer-events: none;
+    opacity: 0.5;
+    animation: sparkle 20s linear infinite;
+}
+
+@keyframes sparkle {
+    from { background-position: 0 0; }
+    to { background-position: 100% 100%; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hiệu ứng chuyển trang */
+body.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .container {
     max-width: 1100px;
     margin: 60px auto;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.8);
     padding: 40px 50px;
-    border-radius: 14px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border-radius: 30px;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.05),
+        0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.07),
+        0 35px 65px -12px rgba(0, 0, 0, 0.12);
+}
+
+.container:hover::before {
+    left: 100%;
 }
 
 /* ==== Header ==== */
@@ -39,14 +96,28 @@ body.loaded {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 35px;
+    position: relative;
 }
 
 h1 {
     color: #ff9800;
-    font-size: 26px;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 800;
     letter-spacing: 0.5px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #ff9800;
+    border-radius: 2px;
 }
 
 .top-buttons {
@@ -57,114 +128,837 @@ h1 {
 /* ==== Bảng danh sách ==== */
 .machine-table {
     width: 100%;
-    border-collapse: collapse;
-    border-radius: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 20px;
     overflow: hidden;
     font-size: 15px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.03);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .machine-table thead {
-    background: #ff9800;
-    color: #fff;
+    background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);
+    color: white;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 1px;
+    font-weight: 500;
+    position: relative;
+}
+
+.machine-table thead::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 5px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
 }
 
 .machine-table th,
 .machine-table td {
-    padding: 12px 14px;
+    padding: 18px;
     text-align: center;
-    border-bottom: 1px solid #eee;
+}
+
+.machine-table th {
+    font-weight: 500;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.machine-table td {
+    font-size: 14px;
+    color: #4a5568;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.machine-table tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.machine-table tbody tr::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.machine-table tbody tr:hover::after {
+    transform: translateX(100%);
+}
+
+/* ==== Action Buttons ==== */
+.machine-table .action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.machine-table .action-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.machine-table .action-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    transition: left 0.5s ease;
+}
+
+.machine-table .action-button:hover::before {
+    left: 100%;
+}
+
+.machine-table .edit-button {
+    background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.machine-table .edit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.machine-table .delete-button {
+    background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.machine-table .delete-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+}
+
+.machine-table .view-button {
+    background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.machine-table .view-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
 }
 
 .machine-table tbody tr:nth-child(even) {
-    background: #fafafa;
+    background: rgba(247, 250, 252, 0.5);
 }
 
 .machine-table tbody tr:hover {
-    background: #fff5e6;
-    transition: 0.2s;
+    background: rgba(255, 248, 225, 0.9);
+    transform: scale(1.01);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    z-index: 1;
 }
 
 /* ==== Nút hành động ==== */
 .btn {
-    display: inline-block;
-    padding: 7px 13px;
-    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    border: 1px solid transparent;
-    transition: 0.25s;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    transition: transform 0.5s ease;
+}
+
+.btn:hover::before {
+    transform: translate(-50%, -50%) scale(2);
 }
 
 /* Chi tiết */
 .btn-view {
     color: #ff9800;
-    border: 1px solid #ff9800;
-    background: #fff;
+    border: 2px solid #ff9800;
+    background: rgba(255, 152, 0, 0.1);
 }
 .btn-view:hover {
     background: #ff9800;
     color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
 /* Sửa */
 .btn-edit {
     color: #111;
-    border: 1px solid #111;
-    background: #fff;
+    border: 2px solid #111;
+    background: rgba(17, 17, 17, 0.1);
 }
 .btn-edit:hover {
     background: #111;
     color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Xóa */
 .btn-delete {
     color: #c62828;
-    border: 1px solid #c62828;
-    background: #fff;
+    border: 2px solid #c62828;
+    background: rgba(198, 40, 40, 0.1);
 }
 .btn-delete:hover {
     background: #c62828;
     color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
 }
 
 /* Thêm máy */
 .btn-add {
-    background: #ff9800;
+    background: linear-gradient(45deg, #ff9800, #fb8c00);
     color: #fff;
     border: none;
-    padding: 9px 18px;
-    border-radius: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
     font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
 }
 .btn-add:hover {
-    background: #e68a00;
+    background: linear-gradient(45deg, #fb8c00, #f57c00);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
 }
 
 /* Đăng xuất */
 .btn-logout {
-    background: #222;
+    background: linear-gradient(45deg, #333, #111);
     color: #fff;
     border: none;
-    padding: 9px 18px;
-    border-radius: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
     font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 .btn-logout:hover {
-    background: #000;
+    background: linear-gradient(45deg, #111, #000);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* ==== Khác ==== */
+/* ==== Hiệu ứng phụ ==== */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
 .actions a {
-    margin: 0 3px;
+    margin: 0 4px;
 }
 
 .no-data {
     text-align: center;
     color: #999;
-    padding: 20px;
+    padding: 30px;
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+/* ==== Responsive Design ==== */
+@media (max-width: 1024px) {
+    .container {
+        margin: 40px 20px;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .top-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .machine-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .actions a {
+        margin: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    .machine-table th,
+    .machine-table td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+}
+/* ==== Giao diện tổng thể & Animation ==== */
+body {
+    font-family: "Segoe UI", sans-serif;
+    /* Thay đổi: Gradient nền từ cam sang xanh nhạt */
+    background: linear-gradient(120deg, #e0f7ff 0%, #c0dfff 100%);
+    margin: 0;
+    color: #2c3e50;
+    min-height: 100vh;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards;
+    overflow-x: hidden;
+}
+
+/* Thêm particle effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="%23ffffff20"/></svg>') 0 0/50px 50px;
+    pointer-events: none;
+    opacity: 0.5;
+    animation: sparkle 20s linear infinite;
+}
+
+@keyframes sparkle {
+    from { background-position: 0 0; }
+    to { background-position: 100% 100%; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hiệu ứng chuyển trang */
+body.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.container {
+    max-width: 1100px;
+    margin: 60px auto;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 40px 50px;
+    border-radius: 30px;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.05),
+        0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.07),
+        0 35px 65px -12px rgba(0, 0, 0, 0.12);
+}
+
+.container:hover::before {
+    left: 100%;
+}
+
+/* ==== Header ==== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    position: relative;
+}
+
+h1 {
+    /* Thay đổi: Màu chữ tiêu đề từ cam sang xanh */
+    color: #0066cc;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    /* Thay đổi: Màu gạch chân từ cam sang xanh */
+    background: #0066cc;
+    border-radius: 2px;
+}
+
+.top-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* ==== Bảng danh sách ==== */
+.machine-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.03);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.machine-table thead {
+    /* Thay đổi: Nền a-header từ cam sang xanh (giống nút login) */
+    background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    position: relative;
+}
+
+.machine-table thead::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 5px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+}
+
+.machine-table th,
+.machine-table td {
+    padding: 18px;
+    text-align: center;
+}
+
+.machine-table th {
+    font-weight: 500;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.machine-table td {
+    font-size: 14px;
+    color: #4a5568;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.machine-table tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.machine-table tbody tr::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.machine-table tbody tr:hover::after {
+    transform: translateX(100%);
+}
+
+/* ==== Action Buttons (Trong bảng) ==== */
+.machine-table .action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.machine-table .action-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.machine-table .action-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    transition: left 0.5s ease;
+}
+
+.machine-table .action-button:hover::before {
+    left: 100%;
+}
+
+/* Nút Sửa (Giữ nguyên màu xanh lá) */
+.machine-table .edit-button {
+    background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.machine-table .edit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+/* Nút Xóa (Giữ nguyên màu đỏ) */
+.machine-table .delete-button {
+    background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.machine-table .delete-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+}
+
+/* Nút Xem (Giữ nguyên màu xanh dương) */
+.machine-table .view-button {
+    background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.machine-table .view-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.machine-table tbody tr:nth-child(even) {
+    background: rgba(247, 250, 252, 0.5);
+}
+
+.machine-table tbody tr:hover {
+    /* Thay đổi: Màu hover hàng từ vàng nhạt sang xanh nhạt */
+    background: rgba(230, 245, 255, 0.9);
+    transform: scale(1.01);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    z-index: 1;
+}
+
+/* ==== Nút hành động (Ngoài bảng) ==== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    transition: transform 0.5s ease;
+}
+
+.btn:hover::before {
+    transform: translate(-50%, -50%) scale(2);
+}
+
+/* Chi tiết (btn-view) */
+.btn-view {
+    /* Thay đổi: Màu nút từ cam sang xanh (giống register-link) */
+    color: #0066cc;
+    border: 2px solid #0066cc;
+    background: rgba(0, 102, 204, 0.1);
+}
+.btn-view:hover {
+    /* Thay đổi: Màu hover từ cam sang xanh */
+    background: #0066cc;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+/* Sửa (Giữ nguyên màu đen) */
+.btn-edit {
+    color: #111;
+    border: 2px solid #111;
+    background: rgba(17, 17, 17, 0.1);
+}
+.btn-edit:hover {
+    background: #111;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Xóa (Giữ nguyên màu đỏ) */
+.btn-delete {
+    color: #c62828;
+    border: 2px solid #c62828;
+    background: rgba(198, 40, 40, 0.1);
+}
+.btn-delete:hover {
+    background: #c62828;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+}
+
+/* Thêm máy (btn-add) */
+.btn-add {
+    /* Thay đổi: Nền từ cam sang xanh (giống nút login) */
+    background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    /* Thay đổi: Box shadow từ cam sang xanh */
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.2);
+}
+.btn-add:hover {
+    /* Thay đổi: Nền hover từ cam sang xanh */
+    background: linear-gradient(135deg, #0099ff 0%, #0080ff 100%);
+    transform: translateY(-2px);
+    /* Thay đổi: Box shadow hover từ cam sang xanh */
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
+}
+
+/* Đăng xuất (Giữ nguyên màu đen) */
+.btn-logout {
+    background: linear-gradient(45deg, #333, #111);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.btn-logout:hover {
+    background: linear-gradient(45deg, #111, #000);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ==== Hiệu ứng phụ ==== */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.actions a {
+    margin: 0 4px;
+}
+
+.no-data {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+/* ==== Responsive Design (Giữ nguyên) ==== */
+@media (max-width: 1024px) {
+    .container {
+        margin: 40px 20px;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .top-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .machine-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .actions a {
+        margin: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    .machine-table th,
+    .machine-table td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
 }

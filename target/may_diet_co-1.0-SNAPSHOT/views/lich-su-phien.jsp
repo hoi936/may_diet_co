@@ -33,7 +33,7 @@
                 <tr>
                     <th>Thời gian</th>
                     <th>Số cỏ phát hiện</th>
-                    <th>Số cỏ diệt</th>
+<!--                    <th>Số cỏ diệt</th>-->
                     <th>Thứ tự</th>
                     <th>Ảnh minh họa</th>
                 </tr>
@@ -46,7 +46,7 @@
                 <tr>
                     <td><%= ls.getThoiGian() %></td>
                     <td><%= ls.getSoCoPhatHien() %></td>
-                    <td><%= ls.getSoCoDiet() %></td>
+<!--                    <td><%= ls.getSoCoDiet() %></td>-->
                     <td><%= ls.getViTri() %></td>
                     <td>
                         <% if (ls.getDuongDanAnh() != null && !ls.getDuongDanAnh().isEmpty()) { %>

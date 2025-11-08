@@ -63,8 +63,36 @@
                 </tbody>
             </table>
             <script>
-                window.addEventListener("load", () => {
-                    document.body.classList.add("loaded");
+                // Animation khi load trang
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.style.opacity = "1";
+                    document.body.style.transform = "translateY(0)";
+                });
+
+                // Hiệu ứng chuyển trang mượt
+                document.querySelectorAll("a").forEach(link => {
+                    link.addEventListener("click", e => {
+                        const href = link.getAttribute("href");
+                        if (href && !href.startsWith("#") && !href.startsWith("http")) {
+                            e.preventDefault();
+                            document.body.classList.add("fade-out");
+                            
+                            setTimeout(() => {
+                                window.location.href = href;
+                            }, 600);
+                        }
+                    });
+                });
+
+                // Xác nhận xóa với animation
+                document.querySelectorAll(".btn-delete").forEach(btn => {
+                    btn.addEventListener("click", e => {
+                        if (!confirm("Bạn có chắc muốn xóa máy này không?")) {
+                            e.preventDefault();
+                            btn.classList.add("shake");
+                            setTimeout(() => btn.classList.remove("shake"), 500);
+                        }
+                    });
                 });
             </script>
     </body>

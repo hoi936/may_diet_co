@@ -7,19 +7,45 @@
 
 body {
   font-family: "Segoe UI", sans-serif;
-  background: #f6f6f6;
+  /* Thay đổi: Nền gradient xanh */
+  background: linear-gradient(120deg, #e0f7ff 0%, #c0dfff 100%);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
   padding: 50px 20px;
   color: #222;
+  overflow-x: hidden; /* Thêm */
+}
+
+/* Thêm: Hiệu ứng particle */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="%23ffffff20"/></svg>') 0 0/50px 50px;
+    pointer-events: none;
+    opacity: 0.5;
+    animation: sparkle 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes sparkle {
+    from { background-position: 0 0; }
+    to { background-position: 100% 100%; }
 }
 
 /* ==== Khung chính ==== */
 .main-container {
-  background: #fff;
-  width: 780px; /* vừa hơn, không quá to */
+  /* Thay đổi: Hiệu ứng kính mờ (frosted glass) */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  
+  width: 780px; 
   max-width: 95%;
   padding: 45px 55px;
   border-radius: 18px;
@@ -29,7 +55,8 @@ body {
 /* ==== Tiêu đề ==== */
 .form-title {
   text-align: center;
-  color: #ff9800;
+  /* Thay đổi: Màu cam -> xanh */
+  color: #0066cc;
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 40px;
@@ -43,7 +70,8 @@ body {
   display: block;
   width: 60px;
   height: 3px;
-  background: #ff9800;
+  /* Thay đổi: Màu cam -> xanh */
+  background: #0066cc;
   border-radius: 3px;
   margin-top: 6px;
 }
@@ -77,8 +105,10 @@ body {
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #ff9800;
-  box-shadow: 0 0 8px rgba(255, 152, 0, 0.2);
+  /* Thay đổi: Viền cam -> xanh */
+  border-color: #0080ff;
+  /* Thay đổi: Shadow cam -> xanh */
+  box-shadow: 0 0 8px rgba(0, 102, 204, 0.2);
   outline: none;
 }
 
@@ -102,25 +132,32 @@ body {
   min-width: 140px;
   text-align: center;
 }
+.btn:hover {
+  transform: translateY(-2px); /* Thêm hover chung */
+}
 
-/* Nút cam: lưu */
+/* Nút xanh: lưu */
 .btn-submit {
-  background: #ff9800;
+  /* Thay đổi: Nền cam -> gradient xanh */
+  background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
   color: #fff;
-  box-shadow: 0 6px 18px rgba(255, 152, 0, 0.2);
+  /* Thay đổi: Shadow cam -> xanh */
+  box-shadow: 0 6px 18px rgba(0, 102, 204, 0.25);
 }
 .btn-submit:hover {
-  background: #e68a00;
+  /* Thay đổi: Hover cam -> xanh */
+  background: linear-gradient(135deg, #0099ff 0%, #0080ff 100%);
   transform: translateY(-2px);
 }
 
-/* Nút đen: quay lại */
+/* Nút đen: quay lại (Giữ nguyên) */
 .btn-back {
   background: #111;
   color: #fff;
 }
 .btn-back:hover {
   background: #000;
+  transform: translateY(-2px);
 }
 
 /* ==== Responsive ==== */
