@@ -17,62 +17,60 @@ public class LichSuCo {
     private String viTri;
     private LocalDateTime thoiGian;
     private String duongDanAnh;
+    
+    // ✅ 1. THÊM BIẾN NÀY
+    private int maPhien;
 
-    // Getters & Setters
+    // --- (Các Getters/Setters cũ giữ nguyên) ---
     public int getMaLichSu() {
         return maLichSu;
     }
-
     public void setMaLichSu(int maLichSu) {
         this.maLichSu = maLichSu;
     }
-
     public String getMaDinhDanh() {
         return maDinhDanh;
     }
-
     public void setMaDinhDanh(String maDinhDanh) {
         this.maDinhDanh = maDinhDanh;
     }
-
     public int getSoCoPhatHien() {
         return soCoPhatHien;
     }
-
     public void setSoCoPhatHien(int soCoPhatHien) {
         this.soCoPhatHien = soCoPhatHien;
     }
-
     public int getSoCoDiet() {
         return soCoDiet;
     }
-
     public void setSoCoDiet(int soCoDiet) {
         this.soCoDiet = soCoDiet;
     }
-
     public String getViTri() {
         return viTri;
     }
-
     public void setViTri(String viTri) {
         this.viTri = viTri;
     }
-
     public LocalDateTime getThoiGian() {
         return thoiGian;
     }
-
     public void setThoiGian(LocalDateTime thoiGian) {
         this.thoiGian = thoiGian;
     }
-
     public String getDuongDanAnh() {
         return duongDanAnh;
     }
-
     public void setDuongDanAnh(String duongDanAnh) {
         this.duongDanAnh = duongDanAnh;
     }
-}
 
+    // ✅ 2. SỬA LẠI 2 HÀM BỊ LỖI
+    public int getMaPhien() {
+        return maPhien;
+    }
+
+    public void setMaPhien(int maPhien) {
+        this.maPhien = maPhien;
+    }
+}
