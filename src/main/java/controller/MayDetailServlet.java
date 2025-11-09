@@ -1,12 +1,11 @@
 package controller;
 
-// Đảm bảo bạn đã import đủ các lớp này
 import dao.MayDietCoDAO;
 import dao.PhienHoatDongDAO;
 import dao.LenhDieuKhienDAO;
 import model.MayDietCo;
 import model.PhienHoatDong;
-import controller.ClientConnectionManager; // <-- Import này rất quan trọng
+import controller.ClientConnectionManager; 
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -19,7 +18,7 @@ public class MayDetailServlet extends HttpServlet {
     private final LenhDieuKhienDAO lenhDAO = new LenhDieuKhienDAO();
 
     /**
-     * ✅ HÀM NÀY ĐÃ ĐƯỢC CẬP NHẬT
+     * ✅ HÀM NÀY GIỮ NGUYÊN
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -35,15 +34,11 @@ public class MayDetailServlet extends HttpServlet {
             }
 
             List<PhienHoatDong> phienList = phienDAO.getAllByMay(may.getMaDinhDanh());
-
-            // ✅✅✅ LOGIC MỚI ĐỂ KIỂM TRA ONLINE ✅✅✅
-            // Kiểm tra xem có socket nào đang kết nối cho máy này không
             boolean isOnline = (ClientConnectionManager.getConnection(may.getMaDinhDanh()) != null);
             
-            // Gửi tất cả dữ liệu ra JSP
             request.setAttribute("may", may);
             request.setAttribute("phienList", phienList);
-            request.setAttribute("isOnline", isOnline); // <-- Gửi trạng thái online
+            request.setAttribute("isOnline", isOnline); 
 
             request.getRequestDispatcher("/views/may-detail.jsp").forward(request, response);
 
@@ -56,13 +51,12 @@ public class MayDetailServlet extends HttpServlet {
     }
 
     /**
-     * ✅ HÀM NÀY GIỮ NGUYÊN (Không cần sửa)
+     * ✅✅✅ HÀM NÀY ĐÃ ĐƯỢC SỬA LỖI RELOAD (Cách 2) ✅✅✅
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // ... (Toàn bộ code doPost của bạn giữ nguyên như cũ) ...
         int maMay = Integer.parseInt(request.getParameter("id"));
         String action = request.getParameter("action");
 
@@ -75,51 +69,64 @@ public class MayDetailServlet extends HttpServlet {
         String maDinhDanh = may.getMaDinhDanh();
         String currentState = may.getTrangThai(); 
 
+        // 1. LỆNH START
         if (action.equals("START")) {
-            
             if (!"DANG_HOAT_DONG".equals(currentState)) {
-                
                 float quangDuong = 20.0f; 
                 try {
                     quangDuong = Float.parseFloat(request.getParameter("quangDuongMucTieu"));
-                } catch (Exception e) {
-                    System.err.println("Không đọc được quãng đường, dùng giá trị mặc định 20.0m");
-                }
-
+                } catch (Exception e) { /* Bỏ qua, dùng giá trị mặc định */ }
+                
                 int newMaPhien = phienDAO.startPhien(maDinhDanh, quangDuong);
 
                 if (newMaPhien != -1) { 
-                    may.setTrangThai("DANG_HOAT_DONG");
-                    mayDAO.update(may);
-                    
+                    mayDAO.updateTrangThai(maDinhDanh, "DANG_HOAT_DONG");
                     lenhDAO.insertCommand(maDinhDanh, action);
-                    
                     String command = String.format("START:%d:%.1f", newMaPhien, quangDuong);
-                    
                     ClientConnectionManager.sendCommand(maDinhDanh, command);
                     System.out.println("✅ Đã gửi lệnh: " + command);
-
                 } else {
-                    System.err.println("⚠️ LỖI NGHIÊM TRỌNG: Không thể tạo phiên mới trong CSDL.");
+                    System.err.println("⚠️ LỖI: Không thể tạo phiên mới trong CSDL.");
                 }
-                
-            } else {
-                System.out.println("⚠️ Cảnh báo: Máy đã chạy, bỏ qua lệnh START.");
-            }
-
+            } 
+        
+        // 2. LỆNH STOP
         } else if (action.equals("STOP")) {
-            
-             if ("DANG_HOAT_DONG".equals(currentState)) {
-                
+             if ("DANG_HOAT_DONG".equals(currentState) || "TAM_DUNG".equals(currentState)) { 
+                mayDAO.updateTrangThai(maDinhDanh, "NGUNG_HOAT_DONG"); 
                 lenhDAO.insertCommand(maDinhDanh, action);
                 ClientConnectionManager.sendCommand(maDinhDanh, "STOP");
                 System.out.println("✅ Đã gửi lệnh: STOP (Dừng thủ công)");
-                
-            } else {
-                 System.out.println("⚠️ Cảnh báo: Máy đã dừng, bỏ qua lệnh STOP.");
+            }
+        
+        // 3. LỆNH PAUSE
+        } else if (action.equals("PAUSE")) {
+            if ("DANG_HOAT_DONG".equals(currentState)) { 
+                mayDAO.updateTrangThai(maDinhDanh, "TAM_DUNG");
+                lenhDAO.insertCommand(maDinhDanh, action);
+                ClientConnectionManager.sendCommand(maDinhDanh, "PAUSE");
+                System.out.println("✅ Đã gửi lệnh: PAUSE");
+            }
+
+        // 4. LỆNH RESUME
+        } else if (action.equals("RESUME")) {
+            if ("TAM_DUNG".equals(currentState)) { 
+                mayDAO.updateTrangThai(maDinhDanh, "DANG_HOAT_DONG");
+                lenhDAO.insertCommand(maDinhDanh, action);
+                ClientConnectionManager.sendCommand(maDinhDanh, "RESUME");
+                System.out.println("✅ Đã gửi lệnh: RESUME");
             }
         }
 
+        // ✅✅✅ DÒNG SỬA LỖI NẰM Ở ĐÂY ✅✅✅
+        // Thêm độ trễ 0.5 giây để đợi tin nhắn "cũ" (stale) từ client
+        try { 
+            Thread.sleep(500); // Đợi 500 mili-giây
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Chuyển hướng về trang chi tiết
         response.sendRedirect(request.getContextPath() + "/may-detail?id=" + maMay);
     }
 }

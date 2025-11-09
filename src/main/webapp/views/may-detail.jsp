@@ -3,14 +3,18 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 
 <%
+    // --- Lấy dữ liệu từ Servlet ---
     MayDietCo may = (MayDietCo) request.getAttribute("may");
     List<PhienHoatDong> phienList = (List<PhienHoatDong>) request.getAttribute("phienList");
     
-    // Kiểm tra trạng thái máy
-    boolean isRunning = "DANG_HOAT_DONG".equals(may.getTrangThai());
-    
-    // ✅ Lấy biến isOnline từ Servlet (phải kiểm tra null)
+    // --- Lấy các trạng thái ---
+    String trangThai = may.getTrangThai();
     boolean isOnline = (request.getAttribute("isOnline") != null && (Boolean) request.getAttribute("isOnline"));
+    
+    // --- Biến kiểm soát trạng thái ---
+    boolean isRunning = "DANG_HOAT_DONG".equals(trangThai);
+    boolean isPaused = "TAM_DUNG".equals(trangThai);
+    boolean isStopped = "NGUNG_HOAT_DONG".equals(trangThai);
 %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -20,15 +24,22 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/frontend/css/may_list.css">
     
     <style>
-        .start-control { display: flex; align-items: center; gap: 10px; }
-        .start-control label { font-weight: bold; font-size: 1em; }
-        .start-control input[type="number"] { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
+        /* CSS cho các khối điều khiển */
         .control-buttons { margin-top: 20px; }
+        .control-block { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .control-block label { font-weight: bold; font-size: 1em; }
+        .control-block input[type="number"] { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
         
+        /* CSS cho các nút mới */
+        .btn-pause { background-color: #ffc107; color: black; }
+        .btn-resume { background-color: #28a745; color: white; }
+
         /* CSS cho nút bị vô hiệu hóa */
         button:disabled, input:disabled {
-            background-color: #cccccc;
+            background-color: #cccccc !important;
+            color: #666666 !important;
             cursor: not-allowed;
+            border-color: #999999;
         }
     </style>
 </head>
@@ -45,13 +56,19 @@
         <div class="machine-detail">
             <h2><%= may.getTenMay() %></h2>
             <p><b>Mã định danh:</b> <%= may.getMaDinhDanh() %></p>
+            
+            <%-- HIỂN THỊ TRẠNG THÁI MÁY (CÓ MÀU CHO TAM_DUNG) --%>
             <p><b>Trạng thái:</b> 
-                <span class="<%= isRunning ? "status-on" : "status-off" %>">
-                    <%= may.getTrangThai() %>
-                </span>
+                <% if (isRunning) { %>
+                    <span class="status-on"><%= trangThai %></span>
+                <% } else if (isPaused) { %>
+                    <span style="color: #ffc107; font-weight: bold;"><%= trangThai %></span>
+                <% } else { %>
+                    <span class="status-off"><%= trangThai %></span>
+                <% } %>
             </p>
 
-            <%-- ✅ HIỂN THỊ TRẠNG THÁI KẾT NỐI --%>
+            <%-- HIỂN THỊ TRẠNG THÁI KẾT NỐI --%>
             <p><b>Trạng thái kết nối:</b>
                 <% if (isOnline) { %>
                     <span style="color: #28a745; font-weight: bold;">Đã kết nối (Online)</span>
@@ -60,29 +77,47 @@
                 <% } %>
             </p>
 
-            <%-- ✅ FORM ĐIỀU KHIỂN ĐÃ CẬP NHẬT LOGIC 'disabled' --%>
+            <%-- ✅✅✅ KHỐI FORM ĐIỀU KHIỂN ĐÃ CẬP NHẬT HOÀN CHỈNH ✅✅✅ --%>
             <form method="post" action="<%= request.getContextPath()%>/may-detail?id=<%= may.getMaMay()%>" class="control-buttons">
                 
-                <%-- KHỐI "BẬT MÁY" --%>
-                <% if (!isRunning) { %>
-                    <div class="start-control">
+                <%-- ==== TRƯỜNG HỢP 1: MÁY ĐANG DỪNG ==== --%>
+                <% if (isStopped) { %>
+                    <div class="control-block start-control">
                         <label for="quangDuong">Quãng đường (m):</label>
                         <input type="number" name="quangDuongMucTieu" id="quangDuong" value="20" min="1" 
-                               <%= !isOnline ? "disabled" : "" %> > <%-- Vô hiệu hóa nếu Offline --%>
+                               <%= !isOnline ? "disabled" : "" %> >
                         
                         <button type="submit" name="action" value="START" class="btn btn-add" 
-                                <%= !isOnline ? "disabled" : "" %> > <%-- Vô hiệu hóa nếu Offline --%>
+                                <%= !isOnline ? "disabled" : "" %> >
                             Bật máy
                         </button>
                     </div>
                 <% } %>
 
-                <%-- KHỐI "TẮT MÁY" --%>
+                <%-- ==== TRƯỜNG HỢP 2: MÁY ĐANG CHẠY ==== --%>
                 <% if (isRunning) { %>
-                    <div class="stop-control">
+                    <div class="control-block running-control">
+                        <button type="submit" name="action" value="PAUSE" class="btn btn-view btn-pause" 
+                                <%= !isOnline ? "disabled" : "" %> >
+                            ⏸ Tạm dừng
+                        </button>
                         <button type="submit" name="action" value="STOP" class="btn btn-delete" 
-                                <%= !isOnline ? "disabled" : "" %> > <%-- Vô hiệu hóa nếu Offline --%>
-                            Tắt máy (Dừng thủ công)
+                                <%= !isOnline ? "disabled" : "" %> >
+                            ⏹ Tắt máy (Dừng thủ công)
+                        </button>
+                    </div>
+                <% } %>
+                
+                <%-- ==== TRƯỜNG HỢP 3: MÁY ĐANG TẠM DỪNG ==== --%>
+                <% if (isPaused) { %>
+                    <div class="control-block paused-control">
+                        <button type="submit" name="action" value="RESUME" class="btn btn-add btn-resume" 
+                                <%= !isOnline ? "disabled" : "" %> >
+                            ▶️ Tiếp tục
+                        </button>
+                        <button type="submit" name="action" value="STOP" class="btn btn-delete" 
+                                <%= !isOnline ? "disabled" : "" %> >
+                            ⏹ Tắt máy
                         </button>
                     </div>
                 <% } %>
@@ -115,32 +150,26 @@
                     <td><%= phien.getThoiGianBat() %></td>
                     <td><%= phien.getThoiGianTat() != null ? phien.getThoiGianTat() : "Đang hoạt động" %></td>
                     
-                    <%-- ✅✅✅ LOGIC NÀY ĐÃ ĐƯỢC CẬP NHẬT ĐỂ XỬ LÝ LỖI ✅✅✅ --%>
+                    <%-- Logic hiển thị quãng đường (Đã bao gồm xử lý lỗi -1.0) --%>
                     <td>
                         <%
                             String mucTieu = String.format("%.1f", phien.getQuangDuongMucTieu()); 
                             
                             if (phien.getQuangDuongHoanThanh() == null) {
-                                // Trường hợp 1: Đang chạy (NULL và thời gian tắt cũng NULL)
                                 if (phien.getThoiGianTat() == null) {
                         %>
                                 <span style="color: #007bff; font-weight: bold;">... / <%= mucTieu %> m</span>
                         <%
                                 } else {
-                                    // Trường hợp 2: Phiên cũ (NULL nhưng đã có thời gian tắt)
                                     out.print("... / 0.0 m");
                                 }
                             } else {
-                                // Trường hợp 3: Đã kết thúc (có giá trị)
                                 float hoanThanh = phien.getQuangDuongHoanThanh();
-                                
                                 if (hoanThanh < 0) {
-                                    // ✅ TRẠNG THÁI LỖI MỚI (ví dụ: -1.0)
                         %>
                                 <b style="color: #dc3545;">Lỗi (Mất kết nối)</b>
                         <%
                                 } else {
-                                    // ✅ Trạng thái hoàn thành bình thường
                                     String hoanThanhStr = String.format("%.1f", hoanThanh);
                         %>
                                 <b style="color: #28a745;"><%= hoanThanhStr %> m / <%= mucTieu %> m</b>
