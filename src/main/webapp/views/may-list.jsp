@@ -26,7 +26,7 @@
                         <th>ID</th>
                         <th>Mã định danh</th>
                         <th>Tên máy</th>
-                        <th>Trạng thái</th>
+                        <th>Trạng thái hoạt động</th>
                         <th>Lần cuối hoạt động</th>
                         <th>Hành động</th>
                     </tr>

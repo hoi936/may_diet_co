@@ -1,8 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.*,model.MayDietCo,model.PhienHoatDong" %>
-<%-- ✅ THÊM THƯ VIỆN JSTL (Nếu bạn chưa có) 
-     Nếu bạn không dùng JSTL, code của tôi bên dưới dùng <% %> scriptlet nên vẫn chạy OK
---%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 
 <%
@@ -11,6 +8,9 @@
     
     // Kiểm tra trạng thái máy
     boolean isRunning = "DANG_HOAT_DONG".equals(may.getTrangThai());
+    
+    // ✅ Lấy biến isOnline từ Servlet (phải kiểm tra null)
+    boolean isOnline = (request.getAttribute("isOnline") != null && (Boolean) request.getAttribute("isOnline"));
 %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -19,26 +19,16 @@
     <title>Chi tiết máy <%= may.getTenMay() %></title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/frontend/css/may_list.css">
     
-    <%-- ✅ CSS ĐƠN GIẢN CHO FORM MỚI --%>
     <style>
-        .start-control {
-            display: flex;
-            align-items: center;
-            gap: 10px; /* Khoảng cách giữa các phần tử */
-        }
-        .start-control label {
-            font-weight: bold;
-            font-size: 1em;
-        }
-        .start-control input[type="number"] {
-            width: 80px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
-        }
-        .control-buttons {
-            margin-top: 20px;
+        .start-control { display: flex; align-items: center; gap: 10px; }
+        .start-control label { font-weight: bold; font-size: 1em; }
+        .start-control input[type="number"] { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
+        .control-buttons { margin-top: 20px; }
+        
+        /* CSS cho nút bị vô hiệu hóa */
+        button:disabled, input:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -61,29 +51,45 @@
                 </span>
             </p>
 
-            <%-- ✅ FORM ĐIỀU KHIỂN ĐÃ CẬP NHẬT --%>
+            <%-- ✅ HIỂN THỊ TRẠNG THÁI KẾT NỐI --%>
+            <p><b>Trạng thái kết nối:</b>
+                <% if (isOnline) { %>
+                    <span style="color: #28a745; font-weight: bold;">Đã kết nối (Online)</span>
+                <% } else { %>
+                    <span style="color: #dc3545; font-weight: bold;">Mất kết nối (Offline)</span>
+                <% } %>
+            </p>
+
+            <%-- ✅ FORM ĐIỀU KHIỂN ĐÃ CẬP NHẬT LOGIC 'disabled' --%>
             <form method="post" action="<%= request.getContextPath()%>/may-detail?id=<%= may.getMaMay()%>" class="control-buttons">
                 
-                <%-- KHỐI "BẬT MÁY" - Chỉ hiển thị khi máy đang dừng --%>
+                <%-- KHỐI "BẬT MÁY" --%>
                 <% if (!isRunning) { %>
                     <div class="start-control">
                         <label for="quangDuong">Quãng đường (m):</label>
-                        <%-- Đây là ô input quan trọng, Servlet sẽ đọc "name" của nó --%>
-                        <input type="number" name="quangDuongMucTieu" id="quangDuong" value="20" min="1">
+                        <input type="number" name="quangDuongMucTieu" id="quangDuong" value="20" min="1" 
+                               <%= !isOnline ? "disabled" : "" %> > <%-- Vô hiệu hóa nếu Offline --%>
                         
-                        <button type="submit" name="action" value="START" class="btn btn-add">
+                        <button type="submit" name="action" value="START" class="btn btn-add" 
+                                <%= !isOnline ? "disabled" : "" %> > <%-- Vô hiệu hóa nếu Offline --%>
                             Bật máy
                         </button>
                     </div>
                 <% } %>
 
-                <%-- KHỐI "TẮT MÁY" - Chỉ hiển thị khi máy đang chạy --%>
+                <%-- KHỐI "TẮT MÁY" --%>
                 <% if (isRunning) { %>
                     <div class="stop-control">
-                        <button type="submit" name="action" value="STOP" class="btn btn-delete">
+                        <button type="submit" name="action" value="STOP" class="btn btn-delete" 
+                                <%= !isOnline ? "disabled" : "" %> > <%-- Vô hiệu hóa nếu Offline --%>
                             Tắt máy (Dừng thủ công)
                         </button>
                     </div>
+                <% } %>
+                
+                <%-- Thông báo lỗi nếu Offline --%>
+                <% if (!isOnline) { %>
+                    <p style="color: #dc3545; margin-top: 10px;">Không thể điều khiển do máy đang Offline.</p>
                 <% } %>
             </form>
         </div>
@@ -95,7 +101,6 @@
                     <th>Mã phiên</th>
                     <th>Thời gian bắt đầu</th>
                     <th>Thời gian kết thúc</th>
-                    <%-- ✅ CỘT MỚI --%>
                     <th>Quãng đường (Hoàn thành / Mục tiêu)</th> 
                     <th>Hành động</th>
                 </tr>
@@ -110,28 +115,37 @@
                     <td><%= phien.getThoiGianBat() %></td>
                     <td><%= phien.getThoiGianTat() != null ? phien.getThoiGianTat() : "Đang hoạt động" %></td>
                     
-                    <%-- ✅ LOGIC HIỂN THỊ QUÃNG ĐƯỜNG MỚI --%>
+                    <%-- ✅✅✅ LOGIC NÀY ĐÃ ĐƯỢC CẬP NHẬT ĐỂ XỬ LÝ LỖI ✅✅✅ --%>
                     <td>
                         <%
-                            // Format số thành 1 chữ số thập phân (ví dụ: 20.0)
                             String mucTieu = String.format("%.1f", phien.getQuangDuongMucTieu()); 
                             
                             if (phien.getQuangDuongHoanThanh() == null) {
-                                // Đang chạy (hoặc phiên cũ không có dữ liệu)
+                                // Trường hợp 1: Đang chạy (NULL và thời gian tắt cũng NULL)
                                 if (phien.getThoiGianTat() == null) {
                         %>
                                 <span style="color: #007bff; font-weight: bold;">... / <%= mucTieu %> m</span>
                         <%
                                 } else {
-                                    // Phiên cũ từ trước khi nâng cấp
+                                    // Trường hợp 2: Phiên cũ (NULL nhưng đã có thời gian tắt)
                                     out.print("... / 0.0 m");
                                 }
                             } else {
-                                // Đã kết thúc
-                                String hoanThanh = String.format("%.1f", phien.getQuangDuongHoanThanh());
+                                // Trường hợp 3: Đã kết thúc (có giá trị)
+                                float hoanThanh = phien.getQuangDuongHoanThanh();
+                                
+                                if (hoanThanh < 0) {
+                                    // ✅ TRẠNG THÁI LỖI MỚI (ví dụ: -1.0)
                         %>
-                                <b style="color: #28a745;"><%= hoanThanh %> m / <%= mucTieu %> m</b>
+                                <b style="color: #dc3545;">Lỗi (Mất kết nối)</b>
                         <%
+                                } else {
+                                    // ✅ Trạng thái hoàn thành bình thường
+                                    String hoanThanhStr = String.format("%.1f", hoanThanh);
+                        %>
+                                <b style="color: #28a745;"><%= hoanThanhStr %> m / <%= mucTieu %> m</b>
+                        <%
+                                }
                             }
                         %>
                     </td>
@@ -147,7 +161,6 @@
                     } else {
                 %>
                 <tr>
-                    <%-- ✅ Cập nhật colspan="5" --%>
                     <td colspan="5" class="no-data">Chưa có phiên hoạt động nào.</td> 
                 </tr>
                 <%

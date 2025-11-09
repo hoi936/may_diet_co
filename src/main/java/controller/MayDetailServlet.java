@@ -6,7 +6,7 @@ import dao.PhienHoatDongDAO;
 import dao.LenhDieuKhienDAO;
 import model.MayDietCo;
 import model.PhienHoatDong;
-import controller.ClientConnectionManager; 
+import controller.ClientConnectionManager; // <-- Import này rất quan trọng
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -19,8 +19,7 @@ public class MayDetailServlet extends HttpServlet {
     private final LenhDieuKhienDAO lenhDAO = new LenhDieuKhienDAO();
 
     /**
-     * ✅ HÀM NÀY GIỮ NGUYÊN
-     * (Nó đã đúng vì nó gọi getAllByMay đã được sửa)
+     * ✅ HÀM NÀY ĐÃ ĐƯỢC CẬP NHẬT
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -35,11 +34,17 @@ public class MayDetailServlet extends HttpServlet {
                 return;
             }
 
-            // Hàm này đã được sửa ở Bước 3 để đọc dữ liệu quãng đường
             List<PhienHoatDong> phienList = phienDAO.getAllByMay(may.getMaDinhDanh());
 
+            // ✅✅✅ LOGIC MỚI ĐỂ KIỂM TRA ONLINE ✅✅✅
+            // Kiểm tra xem có socket nào đang kết nối cho máy này không
+            boolean isOnline = (ClientConnectionManager.getConnection(may.getMaDinhDanh()) != null);
+            
+            // Gửi tất cả dữ liệu ra JSP
             request.setAttribute("may", may);
             request.setAttribute("phienList", phienList);
+            request.setAttribute("isOnline", isOnline); // <-- Gửi trạng thái online
+
             request.getRequestDispatcher("/views/may-detail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
@@ -51,12 +56,13 @@ public class MayDetailServlet extends HttpServlet {
     }
 
     /**
-     * ✅ HÀM NÀY THAY ĐỔI LOGIC HOÀN TOÀN
+     * ✅ HÀM NÀY GIỮ NGUYÊN (Không cần sửa)
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // ... (Toàn bộ code doPost của bạn giữ nguyên như cũ) ...
         int maMay = Integer.parseInt(request.getParameter("id"));
         String action = request.getParameter("action");
 
@@ -71,31 +77,23 @@ public class MayDetailServlet extends HttpServlet {
 
         if (action.equals("START")) {
             
-            // Chỉ chạy nếu máy đang KHÔNG hoạt động
             if (!"DANG_HOAT_DONG".equals(currentState)) {
                 
-                // 1. Lấy quãng đường từ form
-                float quangDuong = 20.0f; // Giá trị mặc định nếu có lỗi
+                float quangDuong = 20.0f; 
                 try {
-                    // "quangDuongMucTieu" là 'name' của ô input ở Bước 6
                     quangDuong = Float.parseFloat(request.getParameter("quangDuongMucTieu"));
                 } catch (Exception e) {
                     System.err.println("Không đọc được quãng đường, dùng giá trị mặc định 20.0m");
                 }
 
-                // 2. TẠO PHIÊN MỚI và LẤY VỀ MÃ PHIÊN (từ Bước 3)
                 int newMaPhien = phienDAO.startPhien(maDinhDanh, quangDuong);
 
-                if (newMaPhien != -1) { // Nếu tạo phiên thành công (ID > -1)
-                    // 3. Cập nhật trạng thái máy
+                if (newMaPhien != -1) { 
                     may.setTrangThai("DANG_HOAT_DONG");
                     mayDAO.update(may);
                     
-                    // 4. Ghi lệnh vào DB (cho lịch sử)
                     lenhDAO.insertCommand(maDinhDanh, action);
                     
-                    // 5. Gửi lệnh GỘP đến Jetson: "START:<ma_phien>:<quang_duong>"
-                    // Ví dụ: "START:78:20.0"
                     String command = String.format("START:%d:%.1f", newMaPhien, quangDuong);
                     
                     ClientConnectionManager.sendCommand(maDinhDanh, command);
@@ -111,26 +109,17 @@ public class MayDetailServlet extends HttpServlet {
 
         } else if (action.equals("STOP")) {
             
-             // Chỉ dừng nếu máy đang CHẠY
-            if ("DANG_HOAT_DONG".equals(currentState)) {
+             if ("DANG_HOAT_DONG".equals(currentState)) {
                 
-                // 1. Ghi lệnh vào DB (lịch sử)
                 lenhDAO.insertCommand(maDinhDanh, action);
-
-                // 2. Gửi lệnh STOP đến Jetson
                 ClientConnectionManager.sendCommand(maDinhDanh, "STOP");
                 System.out.println("✅ Đã gửi lệnh: STOP (Dừng thủ công)");
-                
-                // 3. ✅ QUAN TRỌNG: KHÔNG cập nhật CSDL ở đây.
-                // Chúng ta sẽ đợi Jetson gửi về "STOPPED:<distance>"
-                // và SocketClientHandler sẽ làm việc đó.
                 
             } else {
                  System.out.println("⚠️ Cảnh báo: Máy đã dừng, bỏ qua lệnh STOP.");
             }
         }
 
-        // Chuyển hướng về trang chi tiết
         response.sendRedirect(request.getContextPath() + "/may-detail?id=" + maMay);
     }
 }

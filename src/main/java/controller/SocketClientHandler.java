@@ -32,56 +32,50 @@ public class SocketClientHandler extends Thread {
             String line;
             while ((line = reader.readLine()) != null) {
                 
-                // Bỏ qua các dòng trống
+                // --- (TOÀN BỘ CODE TRONG VÒNG LẶP WHILE CỦA BẠN GIỮ NGUYÊN) ---
+                
                 if (line.trim().isEmpty()) {
                     continue;
                 }
                 
                 System.out.println("📥 Nhận từ [" + (maDinhDanh != null ? maDinhDanh : socket.getInetAddress()) + "]: " + line);
 
-                // ✅ LOGIC XÁC THỰC: Luôn phải là lệnh đầu tiên
                 if (maDinhDanh == null) {
                     if (line.startsWith("MAY_ID:")) {
                         maDinhDanh = line.substring(7).trim();
                         ClientConnectionManager.addConnection(maDinhDanh, socket);
                         System.out.println("✅ Máy " + maDinhDanh + " đã xác thực và kết nối.");
                     } else {
-                        // Nếu lệnh đầu tiên không phải MAY_ID, ngắt kết nối
                         System.err.println("⚠️ Lỗi: Client chưa xác thực. Đóng kết nối.");
                         break; 
                     }
-                    continue; // Đọc dòng tiếp theo
+                    continue; 
                 }
 
                 // ------ Xử lý các lệnh sau khi đã xác thực ------
 
                 if (line.startsWith("STATUS:")) {
-                    // Lệnh: "STATUS:<trang_thai_may>"
-                    // Ví dụ: "STATUS:DANG_DI_CHUYEN"
                     String status = line.substring(7).trim();
                     mayDAO.updateTrangThai(maDinhDanh, status);
                     System.out.println("💾 Cập nhật trạng thái " + maDinhDanh + " = " + status);
                 
                 } else if (line.startsWith("WEED:")) {
-                    // ✅ LOGIC MỚI: XỬ LÝ DỮ LIỆU CỎ
-                    // Lệnh: "WEED:<ma_phien>:<vi_tri>:<so_co_diet>:<duong_dan_anh>"
-                    // Ví dụ: "WEED:78:12.3,-45.6:1:img/anh_123.jpg"
                     try {
-                        String[] parts = line.split(":", 5); // Tách thành 5 phần
+                        String[] parts = line.split(":", 5); 
                         int maPhien = Integer.parseInt(parts[1]);
                         String viTri = parts[2];
                         int soCoDiet = Integer.parseInt(parts[3]);
                         String duongDanAnh = parts[4];
                         
                         LichSuCo lsc = new LichSuCo();
-                        lsc.setMaDinhDanh(maDinhDanh); // Lấy từ biến của Handler
+                        lsc.setMaDinhDanh(maDinhDanh); 
                         lsc.setMaPhien(maPhien);
                         lsc.setViTri(viTri);
                         lsc.setSoCoDiet(soCoDiet);
-                        lsc.setSoCoPhatHien(1); // Mặc định 1 lần phát hiện
+                        lsc.setSoCoPhatHien(1); 
                         lsc.setDuongDanAnh(duongDanAnh);
                         
-                        lichSuDAO.insert(lsc); // Lưu vào DB (từ Bước 3)
+                        lichSuDAO.insert(lsc); 
                         System.out.println("💾 Đã lưu Lịch sử cỏ cho phiên " + maPhien);
 
                     } catch (Exception e) {
@@ -89,14 +83,10 @@ public class SocketClientHandler extends Thread {
                     }
                 
                 } else if (line.startsWith("COMPLETED:")) {
-                    // ✅ LOGIC MỚI: MÁY TỰ HOÀN THÀNH
-                    // Lệnh: "COMPLETED:<distance>"
-                    // Ví dụ: "COMPLETED:20.1"
                     try {
                         float distance = Float.parseFloat(line.substring(10).trim());
                         System.out.println("🏁 Máy " + maDinhDanh + " tự hoàn thành: " + distance + "m");
                         
-                        // Cập nhật CSDL: Dừng máy VÀ đóng phiên (từ Bước 3)
                         mayDAO.updateTrangThai(maDinhDanh, "NGUNG_HOAT_DONG");
                         phienDAO.stopPhien(maDinhDanh, distance); 
                     
@@ -105,14 +95,10 @@ public class SocketClientHandler extends Thread {
                     }
 
                 } else if (line.startsWith("STOPPED:")) {
-                    // ✅ LOGIC MỚI: MÁY BỊ DỪNG THỦ CÔNG
-                    // Lệnh: "STOPPED:<distance>"
-                    // Ví dụ: "STOPPED:15.5"
                     try {
                         float distance = Float.parseFloat(line.substring(8).trim());
                         System.out.println("🛑 Máy " + maDinhDanh + " bị dừng thủ công: " + distance + "m");
                         
-                        // Cập nhật CSDL: Dừng máy VÀ đóng phiên (từ Bước 3)
                         mayDAO.updateTrangThai(maDinhDanh, "NGUNG_HOAT_DONG");
                         phienDAO.stopPhien(maDinhDanh, distance);
 
@@ -120,23 +106,39 @@ public class SocketClientHandler extends Thread {
                         System.err.println("⚠️ Lỗi phân tích lệnh STOPPED: " + line + " | Lỗi: " + e.getMessage());
                     }
                 }
-            } // Hết vòng lặp while
+                
+                // --- (HẾT CODE TRONG VÒNG LẶP WHILE) ---
+            } 
 
         } catch (IOException e) {
-            // Lỗi này xảy ra khi client ngắt kết nối đột ngột
             System.out.println("⚠️ Mất kết nối với " + (maDinhDanh != null ? maDinhDanh : "client"));
         } finally {
-            // Dọn dẹp
+            
+            // ✅✅✅ LOGIC MỚI CỦA BẠN NẰM Ở ĐÂY ✅✅✅
+            
+            // Dọn dẹp chỉ khi máy đã xác thực (maDinhDanh != null)
             if (maDinhDanh != null) {
+                // 1. Xóa socket khỏi bộ nhớ
                 ClientConnectionManager.removeConnection(maDinhDanh);
                 
-                // (Tùy chọn nâng cao sau này)
-                // Bạn có thể kiểm tra xem máy có đang chạy mà mất kết nối không
-                // và tự động gọi phienDAO.stopPhien(maDinhDanh, -1) 
-                // (với -1 là mã lỗi "mất kết nối")
+                System.out.println("...Đang kiểm tra và tự động dừng phiên cho " + maDinhDanh + " do mất kết nối.");
+                
+                // 2. Cập nhật trạng thái máy về "NGUNG_HOAT_DONG"
+                // Điều này rất quan trọng để nút "Bật máy" sáng lại
+                mayDAO.updateTrangThai(maDinhDanh, "NGUNG_HOAT_DONG");
+                
+                // 3. Dừng phiên đang chạy (nếu có)
+                // Hàm stopPhien đã đủ thông minh (nhờ "AND thoi_gian_tat IS NULL")
+                // Nó sẽ chỉ cập nhật phiên nào đang chạy.
+                // Chúng ta dùng -1.0f làm mã lỗi "Mất kết nối"
+                phienDAO.stopPhien(maDinhDanh, -1.0f);
+                
+                System.out.println("✅ Đã tự động dừng phiên và cập nhật trạng thái cho " + maDinhDanh);
                 
                 System.out.println("❌ Máy " + maDinhDanh + " đã ngắt kết nối.");
             }
+            
+            // Đóng socket vật lý
             try {
                 if (socket != null && !socket.isClosed()) {
                     socket.close();
