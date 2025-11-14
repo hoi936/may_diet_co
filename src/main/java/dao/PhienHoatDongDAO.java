@@ -118,6 +118,57 @@ public class PhienHoatDongDAO {
      * ✅ HÀM MỚI: Dùng chung để đọc dữ liệu từ ResultSet
      * @throws SQLException
      */
+    public void deletePhien(int maPhien) {
+        String sqlDeleteLichSu = "DELETE FROM lich_su_co WHERE ma_phien = ?";
+        String sqlDeletePhien = "DELETE FROM phien_hoat_dong WHERE ma_phien = ?";
+        
+        Connection conn = null;
+        PreparedStatement psLichSu = null;
+        PreparedStatement psPhien = null;
+
+        try {
+            conn = DBConnect.getConnection();
+            
+            // Bắt đầu một Transaction
+            conn.setAutoCommit(false); 
+
+            // 1. Xóa dữ liệu "con" (lịch sử cỏ) trước
+            psLichSu = conn.prepareStatement(sqlDeleteLichSu);
+            psLichSu.setInt(1, maPhien);
+            psLichSu.executeUpdate();
+            
+            // 2. Xóa dữ liệu "cha" (phiên) sau
+            psPhien = conn.prepareStatement(sqlDeletePhien);
+            psPhien.setInt(1, maPhien);
+            psPhien.executeUpdate();
+            
+            // Nếu cả hai thành công, commit transaction
+            conn.commit();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Nếu có lỗi, rollback tất cả thay đổi
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        } finally {
+            // Đóng các tài nguyên
+            try {
+                if (psLichSu != null) psLichSu.close();
+                if (psPhien != null) psPhien.close();
+                if (conn != null) {
+                    conn.setAutoCommit(true); // Trả về trạng thái tự động commit
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     private PhienHoatDong mapRowToPhienHoatDong(ResultSet rs) throws SQLException {
         PhienHoatDong phien = new PhienHoatDong();
         phien.setMaPhien(rs.getInt("ma_phien"));

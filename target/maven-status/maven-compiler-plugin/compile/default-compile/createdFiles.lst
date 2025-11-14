@@ -25,6 +25,7 @@ controller\MayController.class
 dao\MayDietCoDAO.class
 model\LichSuCo.class
 controller\LogoutServlet.class
+controller\MayDeletePhienServlet.class
 controller\MayDetailServlet.class
 controller\MayAddServlet.class
 dao\LenhDieuKhienDAO.class

@@ -41,6 +41,14 @@
             cursor: not-allowed;
             border-color: #999999;
         }
+        
+        /* Căn chỉnh cho cột hành động có nhiều nút */
+        .machine-table .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -57,7 +65,7 @@
             <h2><%= may.getTenMay() %></h2>
             <p><b>Mã định danh:</b> <%= may.getMaDinhDanh() %></p>
             
-            <%-- HIỂN THỊ TRẠNG THÁI MÁY (CÓ MÀU CHO TAM_DUNG) --%>
+            <%-- HIỂN THỊ TRẠNG THÁI MÁY --%>
             <p><b>Trạng thái:</b> 
                 <% if (isRunning) { %>
                     <span class="status-on"><%= trangThai %></span>
@@ -77,7 +85,7 @@
                 <% } %>
             </p>
 
-            <%-- ✅✅✅ KHỐI FORM ĐIỀU KHIỂN ĐÃ CẬP NHẬT HOÀN CHỈNH ✅✅✅ --%>
+            <%-- KHỐI FORM ĐIỀU KHIỂN --%>
             <form method="post" action="<%= request.getContextPath()%>/may-detail?id=<%= may.getMaMay()%>" class="control-buttons">
                 
                 <%-- ==== TRƯỜNG HỢP 1: MÁY ĐANG DỪNG ==== --%>
@@ -89,7 +97,7 @@
                         
                         <button type="submit" name="action" value="START" class="btn btn-add" 
                                 <%= !isOnline ? "disabled" : "" %> >
-                            Bật máy
+                            Bắt đầu phiên 
                         </button>
                     </div>
                 <% } %>
@@ -103,7 +111,7 @@
                         </button>
                         <button type="submit" name="action" value="STOP" class="btn btn-delete" 
                                 <%= !isOnline ? "disabled" : "" %> >
-                            ⏹ Tắt máy (Dừng thủ công)
+                            ⏹ Kết thúc phiên 
                         </button>
                     </div>
                 <% } %>
@@ -117,7 +125,7 @@
                         </button>
                         <button type="submit" name="action" value="STOP" class="btn btn-delete" 
                                 <%= !isOnline ? "disabled" : "" %> >
-                            ⏹ Tắt máy
+                            ⏹ Kết thúc phiên 
                         </button>
                     </div>
                 <% } %>
@@ -148,13 +156,20 @@
                 <tr>
                     <td><%= phien.getMaPhien() %></td>
                     <td><%= phien.getThoiGianBat() %></td>
-                    <td><%= phien.getThoiGianTat() != null ? phien.getThoiGianTat() : "Đang hoạt động" %></td>
                     
-                    <%-- Logic hiển thị quãng đường (Đã bao gồm xử lý lỗi -1.0) --%>
+                    <%-- Cột Thời gian kết thúc (Cập nhật logic hiển thị) --%>
+                    <td>
+                        <% if (phien.getThoiGianTat() != null) { %>
+                            <%= phien.getThoiGianTat() %>
+                        <% } else { %>
+                            <span style="color: #007bff; font-weight: bold;">Đang hoạt động</span>
+                        <% } %>
+                    </td>
+                    
+                    <%-- Cột Quãng đường (Logic của bạn giữ nguyên) --%>
                     <td>
                         <%
                             String mucTieu = String.format("%.1f", phien.getQuangDuongMucTieu()); 
-                            
                             if (phien.getQuangDuongHoanThanh() == null) {
                                 if (phien.getThoiGianTat() == null) {
                         %>
@@ -179,10 +194,25 @@
                         %>
                     </td>
                     
-                    <td>
+                    <td class="actions">
+                        <%-- Nút "Xem chi tiết" luôn hiển thị --%>
                         <a href="<%= request.getContextPath() %>/lich-su-phien?maPhien=<%= phien.getMaPhien() %>&maMay=<%= may.getMaMay() %>" class="btn btn-view">
                             Xem chi tiết
                         </a>
+                        
+                        <%-- 
+                          LOGIC MỚI:
+                          Chỉ hiển thị nút "Xóa" nếu phien.getThoiGianTat() KHÁC NULL
+                          (Tức là phiên đã kết thúc)
+                        --%>
+                        <% if (phien.getThoiGianTat() != null) { %>
+                            <a href="<%= request.getContextPath() %>/may-delete-phien?maPhien=<%= phien.getMaPhien() %>&maMay=<%= may.getMaMay() %>" 
+                               class="btn btn-delete"
+                               onclick="return confirm('Bạn có chắc muốn xóa phiên #<%= phien.getMaPhien() %> này không?');">
+                                Xóa
+                            </a>
+                        <% } %>
+                        <%-- Nếu phiên đang chạy (thoiGianTat == null), nút Xóa sẽ không được hiển thị --%>
                     </td>
                 </tr>
                 <%
