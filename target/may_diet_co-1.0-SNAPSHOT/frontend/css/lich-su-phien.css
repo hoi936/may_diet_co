@@ -1,46 +1,18 @@
-/* --- BIẾN TOÀN CỤC VÀ RESET --- */
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap');
-
-:root {
-    /* Thay đổi: Cập nhật biến màu để khớp với chủ đề login */
-    --primary-color: #0066cc; /* Màu xanh đậm chính */
-    --primary-gradient-start: #0080ff; /* Màu xanh gradient (giống nút login) */
-    --primary-gradient-end: #0066cc;
-    --primary-shadow-color: rgba(0, 102, 204, 0.2);
-    --primary-light-bg: rgba(0, 102, 204, 0.1); /* Nền xanh nhạt (cho nút view) */
-    
-    --secondary-color: #6c757d;
-    --success-color: #28a745;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --light-color: #f8f9fa;
-    --dark-color: #343a40;
-    --text-color: #495057;
-    --border-color: #dee2e6;
-
-    /* Thay đổi: Nền container mờ */
-    --container-background: rgba(255, 255, 255, 0.85);
-    --container-border: 1px solid rgba(255, 255, 255, 0.4);
-
-    /* Giữ nguyên từ file mới */
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --border-radius: 8px;
-    --font-family: 'Be Vietnam Pro', sans-serif;
-}
-
+/* ==== Giao diện tổng thể & Animation ==== */
 body {
-    font-family: var(--font-family);
-    /* Thay đổi: Nền gradient cho body */
+    font-family: "Segoe UI", sans-serif;
+    /* Nền gradient xanh nhạt */
     background: linear-gradient(120deg, #e0f7ff 0%, #c0dfff 100%);
     margin: 0;
-    padding: 20px;
-    color: var(--text-color);
-    line-height: 1.6;
-    min-height: 100vh; /* Đảm bảo gradient phủ kín */
+    color: #2c3e50;
+    min-height: 100vh;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards;
     overflow-x: hidden;
 }
 
-/* Thêm: Hiệu ứng particle từ file trước */
+/* Thêm particle effect */
 body::before {
     content: '';
     position: fixed;
@@ -52,7 +24,7 @@ body::before {
     pointer-events: none;
     opacity: 0.5;
     animation: sparkle 20s linear infinite;
-    z-index: -1;
+    z-index: -1; 
 }
 
 @keyframes sparkle {
@@ -60,267 +32,323 @@ body::before {
     to { background-position: 100% 100%; }
 }
 
-
-/* ==== HIỆU ỨNG CHUYỂN TRANG ==== */
-/* Giữ nguyên hiệu ứng fade-out của file mới, rất đẹp! */
-body {
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  opacity: 1;
-  transform: scale(1);
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
+/* Hiệu ứng chuyển trang */
 body.fade-out {
-  opacity: 0;
-  transform: scale(0.96);
-  filter: blur(2px);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
 }
-/* --- BỐ CỤC CHÍNH --- */
 .container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 30px;
-    /* Thay đổi: Áp dụng hiệu ứng mờ (frosted glass) */
-    background-color: var(--container-background);
-    border: var(--container-border);
+    max-width: 1100px;
+    margin: 60px auto;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 40px 50px;
+    border-radius: 30px;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.05),
+        0 25px 50px -12px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.07),
+        0 35px 65px -12px rgba(0, 0, 0, 0.12);
+}
+
+.container:hover::before {
+    left: 100%;
+}
+
+/* ==== Header ==== */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
-    gap: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 30px;
+    margin-bottom: 35px;
+    position: relative;
 }
 
-.page-header h1 {
-    margin: 0;
+h1 {
+    color: #0066cc;
     font-size: 28px;
-    /* Thay đổi: Dùng màu xanh chính */
-    color: var(--primary-color); 
-    font-weight: 700;
-}
-
-.header-actions {
-    display: flex;
-    gap: 15px;
-}
-
-/* --- NÚT BẤM (BUTTON) --- */
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    border-radius: var(--border-radius);
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    text-align: center;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary {
-    /* Thay đổi: Nút chính dùng gradient xanh */
-    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
-    color: #fff;
-    border: none;
-    box-shadow: 0 4px 15px var(--primary-shadow-color);
-}
-
-.btn-primary:hover {
-    /* Thay đổi: Hover cho nút gradient */
-    background: linear-gradient(135deg, #0099ff, var(--primary-gradient-start));
-    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
-}
-
-.btn-secondary {
-    background-color: #fff;
-    color: var(--secondary-color);
-    border-color: var(--border-color);
-}
-
-.btn-secondary:hover {
-    background-color: var(--light-color);
-    border-color: #c8ced3;
-}
-
-/* --- BẢNG DỮ LIỆU --- */
-.table-container {
-    overflow-x: auto; /* Tạo thanh cuộn ngang trên màn hình nhỏ */
-}
-
-.modern-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0;
-}
-
-.modern-table th,
-.modern-table td {
-    padding: 15px;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.modern-table thead {
-    /* Thay đổi: Header bảng dùng gradient xanh */
-    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
-}
-
-.modern-table th {
-    font-weight: 700;
-    /* Thay đổi: Chữ trắng trên nền gradient */
-    color: #fff;
-    font-size: 14px;
-    text-transform: uppercase;
+    font-weight: 800;
     letter-spacing: 0.5px;
+    position: relative;
+    padding-bottom: 10px;
 }
 
-.modern-table tbody tr {
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.2s ease;
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #0066cc;
+    border-radius: 2px;
 }
 
-.modern-table tbody tr:last-child {
-    border-bottom: none;
-}
-
-.modern-table tbody tr:hover {
-    /* Thay đổi: Màu hover hàng (giống file trước) */
-    background-color: rgba(230, 245, 255, 0.9);
-}
-
-/* --- CÁC THÀNH PHẦN NHỎ (CHIP, ACTIONS) --- */
-.chip {
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 13px;
-    font-weight: 500;
-    display: inline-block;
-}
-
-.chip-id {
-    background-color: #e9ecef;
-    color: var(--secondary-color);
-}
-
-.chip-success {
-    background-color: rgba(40, 167, 69, 0.1);
-    color: var(--success-color);
-}
-
-.chip-danger {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: var(--danger-color);
-}
-
-.actions {
+.top-buttons {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
-.btn-icon {
-    padding: 8px 12px;
+/* ==== Bảng danh sách ==== */
+.machine-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.03);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.machine-table thead {
+    background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    position: relative;
+}
+
+.machine-table thead::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 5px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+}
+
+.machine-table th,
+.machine-table td {
+    padding: 18px;
+    text-align: center;
+    vertical-align: middle; 
+}
+
+.machine-table th {
+    font-weight: 500;
     font-size: 13px;
-    background-color: #fff;
-    border: 1px solid var(--border-color);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-/* Thay đổi: Nút View đồng bộ với màu xanh nhạt */
-.btn-view { 
-    color: var(--primary-color);
-    background-color: var(--primary-light-bg);
-    border-color: var(--primary-color);
-}
-.btn-view:hover { 
-    background-color: var(--primary-color); 
-    color: #fff; 
+.machine-table td {
+    font-size: 14px;
+    color: #4a5568;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 }
 
-/* Giữ nguyên nút Sửa và Xóa */
-.btn-edit { color: var(--success-color); border-color: var(--success-color); background-color: rgba(40, 167, 69, 0.1); }
-.btn-edit:hover { background-color: var(--success-color); color: #fff; }
+.machine-table tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
 
-.btn-delete { color: var(--danger-color); border-color: var(--danger-color); background-color: rgba(220, 53, 69, 0.1); }
-.btn-delete:hover { background-color: var(--danger-color); color: #fff; }
+.machine-table tbody tr:hover {
+    background: rgba(230, 245, 255, 0.9);
+    transform: scale(1.01);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    z-index: 1;
+}
 
+/* ==== Nút hành động (Ngoài bảng) ==== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* Nút Chi tiết (btn-view) */
+.btn-view {
+    color: #0066cc;
+    border: 2px solid #0066cc;
+    background: rgba(0, 102, 204, 0.1);
+}
+.btn-view:hover {
+    background: #0066cc;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
 
 .no-data {
     text-align: center;
-    padding: 50px;
-    color: var(--secondary-color);
-}
-.no-data p {
-    margin: 5px 0;
-    font-size: 16px;
+    color: #999;
+    padding: 30px;
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    margin: 20px 0;
 }
 
-/* --- THIẾT KẾ ĐÁP ỨNG (RESPONSIVE) --- */
-/* Giữ nguyên toàn bộ phần responsive, nó đã được làm rất tốt */
+/* ==== Responsive Design ==== */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
+    /* ... (Giữ nguyên code responsive của bạn) ... */
+    .machine-table thead {
+        display: none; 
     }
-    
-    .container {
-        padding: 20px;
-        margin: 10px auto;
-    }
-
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .modern-table thead {
-        display: none; /* Ẩn header của bảng trên di động */
-    }
-
-    .modern-table, .modern-table tbody, .modern-table tr, .modern-table td {
+    .machine-table, .machine-table tbody, .machine-table tr, .machine-table td {
         display: block;
         width: 100%;
     }
-
-    .modern-table tr {
+    .machine-table tr {
         margin-bottom: 15px;
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius);
-        overflow: hidden; /* Thêm để bo góc hoạt động */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden; 
     }
-    
-    .modern-table td {
+    .machine-table td {
         text-align: right;
-        padding-left: 50%; /* Tạo không gian cho label */
+        padding-left: 50%; 
         position: relative;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid #eee;
     }
-
-    .modern-table td:last-child {
+    .machine-table td:last-child {
         border-bottom: none;
     }
-
-    .modern-table td::before {
-        content: attr(data-label); /* Lấy nội dung từ thuộc tính data-label */
+    .machine-table td::before {
+        content: attr(data-label);
         position: absolute;
         left: 15px;
         width: calc(50% - 30px);
         text-align: left;
         font-weight: bold;
-        color: var(--dark-color);
+        color: #333;
     }
+}
 
-    .actions {
-        justify-content: flex-end; /* Căn các nút hành động sang phải */
-    }
+/* =========================================
+✅✅✅ CSS CHO MODAL XEM ẢNH (PHẦN QUAN TRỌNG) ✅✅✅
+=========================================
+*/
+
+/* 1. Con trỏ và hiệu ứng cho ảnh nhỏ trong bảng */
+.preview-img {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 6px; 
+    object-fit: cover; 
+    width: 120px; 
+    height: 80px;
+}
+
+.preview-img:hover {
+    transform: scale(1.05); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 2. Lớp phủ nền mờ (CỰC KỲ QUAN TRỌNG) */
+.image-modal-overlay {
+    display: none; /* Ẩn ban đầu, sẽ được JS đổi thành flex khi click */
+    
+    position: fixed; /* RẤT QUAN TRỌNG: Để modal nổi lên trên toàn bộ trang */
+    z-index: 1000; /* RẤT QUAN TRỌNG: Đảm bảo modal nằm trên các phần tử khác */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    
+    overflow: auto; 
+    background-color: rgba(0, 0, 0, 0.85); /* Nền đen mờ */
+    
+    /* Dùng Flexbox để căn giữa ảnh (quan trọng) */
+    align-items: center; 
+    justify-content: center;
+    
+    /* Hiệu ứng mờ dần khi hiện/ẩn */
+    visibility: hidden; 
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* 3. Lớp phủ khi được JS kích hoạt (thêm class .show) */
+.image-modal-overlay.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 4. Ảnh được phóng to (Cũng rất quan trọng) */
+.modal-content {
+    margin: auto;
+    display: block; 
+    
+    /* ✅ ĐÂY LÀ NƠI CHỈNH KÍCH THƯỚC */
+    max-width: 90%;     /* Đổi từ 90% lên 95% cho to hơn */
+    max-height: 90vh;   /* Đổi từ 90vh lên 95vh cho to hơn */
+    
+    object-fit: contain; 
+    border-radius: 8px;
+    
+    animation-name: zoomIn;
+    animation-duration: 0.3s;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* 5. Nút đóng (dấu X) */
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+    z-index: 1001; 
 }
