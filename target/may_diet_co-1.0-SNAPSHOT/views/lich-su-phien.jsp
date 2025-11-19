@@ -16,9 +16,15 @@
     <div class="container">
         <header class="page-header">
             <h1>Lịch sử cỏ của phiên #<%= phien.getMaPhien() %></h1>
-            <a href="<%= request.getContextPath() %>/may-detail?id=<%= request.getAttribute("maMay") %>" class="btn btn-view">
-                ← Quay lại chi tiết máy
-            </a>
+            
+            <div class="header-buttons" style="display: flex; gap: 12px;">
+                <a href="<%= request.getContextPath() %>/thong-ke-phien?maPhien=<%= phien.getMaPhien() %>&maMay=<%= request.getAttribute("maMay") %>" 
+                   class="btn btn-add"> 📊 Xem thống kê
+                </a>
+                <a href="<%= request.getContextPath() %>/may-detail?id=<%= request.getAttribute("maMay") %>" class="btn btn-view">
+                    ← Quay lại chi tiết máy
+                </a>
+            </div>
         </header>
 
         <div style="background: var(--light-color); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
@@ -34,7 +40,7 @@
                 <tr>
                     <th>Thời gian</th>
                     <th>Số cỏ phát hiện</th>
-                    <th>Thứ tự</th>
+                    <th>Vị trí</th>
                     <th>Ảnh minh họa</th>
                 </tr>
             </thead>
@@ -46,7 +52,20 @@
                 <tr>
                     <td data-label="Thời gian"><%= ls.getThoiGian() %></td>
                     <td data-label="Số cỏ"><%= ls.getSoCoPhatHien() %></td>
-                    <td data-label="Thứ tự"><%= ls.getViTri() %></td>
+                    
+                    <%
+                        // Làm tròn giá trị vi_tri
+                        String viTriStr = ls.getViTri();
+                        try {
+                            // Cố gắng chuyển "0.47600000003" thành số
+                            double viTriDouble = Double.parseDouble(viTriStr);
+                            // Làm tròn 3 chữ số, rồi chuyển lại chuỗi
+                            viTriStr = String.format("%.3f", viTriDouble); 
+                        } catch (NumberFormatException e) {
+                            // Bỏ qua nếu nó không phải là số (ví dụ: "Lỗi")
+                        }
+                    %>
+                    <td data-label="Vị trí "><%= viTriStr + " m "%></td>
                     <td data-label="Ảnh">
                         <% if (ls.getDuongDanAnh() != null && !ls.getDuongDanAnh().isEmpty()) { %>
                             <img src="<%= request.getContextPath() %>/<%= ls.getDuongDanAnh() %>" height="80" class="preview-img"/>
@@ -74,69 +93,44 @@
         <img class="modal-content" id="modalImage">
     </div>
 
-
     <script>
-    // Hiệu ứng chuyển trang mượt
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('http')) return; 
-
             e.preventDefault();
             document.body.classList.add('fade-out');
-            
             setTimeout(() => {
                 window.location.href = href;
             }, 700); 
         });
     });
-
-    /*
-    =========================================
-    ✅ JAVASCRIPT CHO MODAL XEM ẢNH
-    =========================================
-    */
     
-    // 1. Lấy các phần tử modal
     const modalOverlay = document.getElementById("imageModal");
     const modalImage = document.getElementById("modalImage");
     const closeModal = document.querySelector(".modal-close");
-
-    // 2. Lấy tất cả các ảnh có class "preview-img"
     const previewImages = document.querySelectorAll(".preview-img");
-
-    // 3. Thêm sự kiện click cho mỗi ảnh
     previewImages.forEach(img => {
         img.addEventListener("click", function() {
-            modalOverlay.style.display = "flex"; // Bật flexbox để căn giữa
-            
-            setTimeout(() => { // Cần một độ trễ nhỏ để transition hoạt động
+            modalOverlay.style.display = "flex"; 
+            setTimeout(() => { 
                 modalOverlay.classList.add("show");
             }, 10); 
-            
             modalImage.src = this.src; 
         });
     });
-
-    // 4. Hàm để đóng modal
     function closeImageModal() {
-        modalOverlay.classList.remove("show"); // Tắt hiệu ứng mờ
-        
-        setTimeout(() => { // Đợi hiệu ứng mờ tắt (300ms) rồi mới ẩn
+        modalOverlay.classList.remove("show"); 
+        setTimeout(() => { 
             modalOverlay.style.display = "none";
         }, 300); 
     }
-
-    // 5. Gán sự kiện click cho nút đóng (dấu X)
     closeModal.addEventListener("click", closeImageModal);
-
-    // 6. Gán sự kiện click cho nền mờ (click ra ngoài để tắt)
     modalOverlay.addEventListener("click", function(event) {
         if (event.target === modalOverlay) {
             closeImageModal();
         }
     });
-
-</script>
+    </script>
 </body>
 </html>

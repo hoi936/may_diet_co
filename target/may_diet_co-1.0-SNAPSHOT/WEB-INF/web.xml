@@ -103,5 +103,12 @@
         <servlet-name>TestApiServlet</servlet-name>
         <url-pattern>/api/test</url-pattern>
     </servlet-mapping>
-
+    <servlet>
+        <servlet-name>ThongKePhienServlet</servlet-name>
+        <servlet-class>controller.ThongKePhienServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ThongKePhienServlet</servlet-name>
+        <url-pattern>/thong-ke-phien</url-pattern>
+    </servlet-mapping>
 </web-app>

@@ -258,17 +258,7 @@ button:hover::before {
     box-shadow: 0 4px 12px rgba(0, 102, 204, 0.1);
 }
 
-.error {
-    color: #ff3b30;
-    margin-top: 15px;
-    font-size: 13px;
-    min-height: 20px;
-    padding: 10px;
-    border-radius: 8px;
-    background: rgba(255, 59, 48, 0.1);
-    backdrop-filter: blur(4px);
-    animation: shake 0.5s ease-in-out;
-}
+
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }

@@ -216,6 +216,18 @@ h1::after {
     border: 2px solid #0066cc;
     background: rgba(0, 102, 204, 0.1);
 }
+.btn-add {
+    background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
+    color: #fff;
+    border: none;
+    padding: 10px 20px; /* (Khớp với .btn) */
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.2);
+}
+.btn-add:hover {
+    background: linear-gradient(135deg, #0099ff 0%, #0080ff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
+}
 .btn-view:hover {
     background: #0066cc;
     color: #fff;

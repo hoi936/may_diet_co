@@ -1,0 +1,67 @@
+/* ==== Giao diện tổng thể (Copy từ lich-su-phien.css) ==== */
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(120deg, #e0f7ff 0%, #c0dfff 100%);
+    margin: 0;
+    color: #2c3e50;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+.container {
+    max-width: 1100px;
+    margin: 60px auto;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 40px 50px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05), 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    position: relative;
+}
+h1 {
+    color: #0066cc;
+    font-size: 28px;
+    font-weight: 800;
+}
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+.btn-view {
+    color: #0066cc;
+    border: 2px solid #0066cc;
+    background: rgba(0, 102, 204, 0.1);
+}
+.btn-view:hover {
+    background: #0066cc;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+/* ==== ✅ CSS MỚI CHO TRANG THỐNG KÊ ==== */
+.chart-container {
+    width: 100%;
+    /* Đặt chiều cao tương đối cho biểu đồ */
+    height: 70vh; 
+    margin-top: 30px;
+    background: #ffffff; /* Nền trắng cho rõ */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
